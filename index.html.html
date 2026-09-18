@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPA - Personal Assistant</title>
+    
+    <!-- Ikon Aplikasi untuk Shortcut / Pemasangan Peranti -->
+    <link rel="icon" type="image/png" href="profil.png">
+    <link rel="apple-touch-icon" href="profil.png">
+    <meta name="theme-color" content="#3730a3">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4f46e5',
+                        primary_dark: '#3730a3',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Modal transitions */
+        .modal { transition: opacity 0.25s ease; }
+        body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex overflow-hidden">
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden md:flex flex-col w-64 bg-slate-900 text-white transition-all duration-300">
+        <div class="p-6 flex flex-col items-center border-b border-slate-700">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl font-bold mb-3 shadow-lg overflow-hidden">
+                <!-- Tukar fallback (onerror) jika profil.png tidak dijumpai -->
+                <img src="profil.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
+            </div>
+            <h1 class="text-2xl font-bold tracking-wider">MyPA</h1>
+            <p class="text-xs text-slate-400 mt-2 text-center italic">"Forgive, yes. Forget, never."</p>
+        </div>
+        
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 bg-primary text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-house w-5"></i>
+                <span class="font-medium">Dashboard</span>
+            </button>
+            <button onclick="switchTab('todo')" id="nav-todo" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-list-check w-5"></i>
+                <span class="font-medium">To-Do List</span>
+            </button>
+            <button onclick="switchTab('docs')" id="nav-docs" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-file-lines w-5"></i>
+                <span class="font-medium">Dokumen & Surat</span>
+            </button>
+            <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-gear w-5"></i>
+                <span class="font-medium">Pentadbir Sistem</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 z-50 flex justify-around pb-safe">
+        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center p-3 text-primary w-1/4">
+            <i class="fa-solid fa-house text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Dashboard</span>
+        </button>
+        <button onclick="switchTab('todo')" id="mob-nav-todo" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors">
+            <i class="fa-solid fa-list-check text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">To-Do</span>
+        </button>
+        <button onclick="switchTab('docs')" id="mob-nav-docs" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors">
+            <i class="fa-solid fa-file-lines text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Dokumen</span>
+        </button>
+        <button onclick="switchTab('admin')" id="mob-nav-admin" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors">
+            <i class="fa-solid fa-gear text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Admin</span>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen relative pb-16 md:pb-0">
+        
+        <!-- Mobile Header -->
+        <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shadow-md z-10">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm font-bold overflow-hidden">
+                    <!-- Tukar fallback (onerror) jika profil.png tidak dijumpai -->
+                    <img src="profil.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
+                </div>
+                <h1 class="text-xl font-bold tracking-wider">MyPA</h1>
+            </div>
+            <span class="text-xs text-slate-300 italic max-w-[120px] text-right leading-tight">"Forgive, yes. Forget, never."</span>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-6xl mx-auto">
+            
+            <!-- 1. DASHBOARD TAB -->
+            <div id="dashboard" class="tab-content active">
+                <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Dashboard</h2>
+                        <p class="text-gray-500">Ringkasan harian dan aktiviti anda.</p>
+                    </div>
+                    <!-- Live Clock -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4 min-w-[250px]">
+                        <div class="text-3xl text-primary"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <div id="live-time" class="text-xl font-bold text-gray-800 tracking-tight">00:00:00</div>
+                            <div id="live-date" class="text-sm text-gray-500">Isnin, 1 Januari 2026</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Today's Tasks -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-lg font-bold text-gray-700 flex items-center"><i class="fa-solid fa-calendar-day text-primary mr-2"></i> Fokus Hari Ini</h3>
+                            <span id="today-count" class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">0 Tugasan</span>
+                        </div>
+                        
+                        <div id="today-tasks-container" class="space-y-3">
+                            <!-- Tasks injected here by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Calendar Widget -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                            <div class="flex justify-between items-center mb-4">
+                                <button onclick="changeMonth(-1)" class="text-gray-400 hover:text-primary"><i class="fa-solid fa-chevron-left"></i></button>
+                                <h3 id="calendar-month-year" class="font-bold text-gray-800">September 2026</h3>
+                                <button onclick="changeMonth(1)" class="text-gray-400 hover:text-primary"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-500 mb-2">
+                                <div>Ahd</div><div>Isn</div><div>Sel</div><div>Rab</div><div>Kha</div><div>Jum</div><div>Sab</div>
+                            </div>
+                            <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm">
+                                <!-- Calendar days injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. TO-DO LIST TAB -->
+            <div id="todo" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Senarai Tugasan</h2>
+                    <p class="text-gray-500">Urus dan pantau perkembangan aktiviti anda.</p>
+                </div>
+
+                <!-- Sub Navigation for To-Do -->
+                <div class="flex overflow-x-auto space-x-2 mb-6 pb-2 hide-scrollbar">
+                    <button onclick="filterTodo('semua')" id="filter-semua" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-gray-800 text-white transition-colors shadow-sm">Semua</button>
+                    <button onclick="filterTodo('akan')" id="filter-akan" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Akan Datang</button>
+                    <button onclick="filterTodo('sedang')" id="filter-sedang" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Sedang Berlangsung</button>
+                    <button onclick="filterTodo('selesai')" id="filter-selesai" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Selesai</button>
+                </div>
+
+                <div id="todo-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Todo items injected by JS -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="todo-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 text-4xl mb-4">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700">Tiada tugasan dijumpai</h3>
+                    <p class="text-gray-500 max-w-sm mt-2">Bagus! Semua berada dalam kawalan atau anda belum menambah tugasan baru.</p>
+                </div>
+            </div>
+
+            <!-- 3. DOKUMEN DAN SURAT TAB -->
+            <div id="docs" class="tab-content">
+                <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Dokumen & Surat</h2>
+                        <p class="text-gray-500">Cari dan muat turun fail yang berkaitan.</p>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="relative w-full md:w-72">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <input type="text" id="doc-search" onkeyup="searchDocs()" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 shadow-sm" placeholder="Cari tajuk, fail atau kata kunci...">
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4 rounded-tl-lg">Nama Dokumen / Fail</th>
+                                    <th scope="col" class="px-6 py-4">Tugasan / Program</th>
+                                    <th scope="col" class="px-6 py-4">Tarikh</th>
+                                    <th scope="col" class="px-6 py-4 text-right rounded-tr-lg">Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="docs-table-body" class="divide-y divide-gray-100">
+                                <!-- Docs injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="docs-empty" class="hidden p-8 text-center text-gray-500">
+                        Tiada dokumen dijumpai.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. PENTADBIR SISTEM TAB -->
+            <div id="admin" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Pentadbir Sistem</h2>
+                    <p class="text-gray-500">Tambah aktiviti, program atau tugasan baru ke dalam MyPA.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6 max-w-3xl">
+                    <form id="add-task-form" onsubmit="handleAddTask(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Tajuk -->
+                            <div class="md:col-span-2">
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tajuk Tugasan / Program <span class="text-red-500">*</span></label>
+                                <input type="text" id="task-title" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" placeholder="Cth: Mesyuarat Pengurusan Suku Ke-3">
+                            </div>
+
+                            <!-- PIC -->
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">PIC (Person In Charge) <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <input type="text" id="task-pic" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-10 p-2.5" placeholder="Nama pegawai bertanggungjawab">
+                                </div>
+                            </div>
+
+                            <!-- Kategori -->
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Kategori <span class="text-red-500">*</span></label>
+                                <select id="task-category" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                    <option value="" disabled selected>Pilih Kategori...</option>
+                                    <option value="Mesyuarat">Mesyuarat</option>
+                                    <option value="Bengkel">Bengkel</option>
+                                    <option value="Kursus">Kursus</option>
+                                    <option value="Taklimat">Taklimat</option>
+                                    <option value="SLU">SLU</option>
+                                    <option value="Kokurikulum">Kokurikulum</option>
+                                    <option value="Koakademik">Koakademik</option>
+                                    <option value="Peribadi">Peribadi</option>
+                                </select>
+                            </div>
+
+                            <!-- Tarikh, Masa & Tempat -->
+                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarikh <span class="text-red-500">*</span></label>
+                                    <input type="date" id="task-date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                </div>
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Masa Mula</label>
+                                    <input type="time" id="task-time-start" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                </div>
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Masa Tamat</label>
+                                    <input type="time" id="task-time-end" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                </div>
+                            </div>
+
+                            <!-- Tempat -->
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tempat</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <input type="text" id="task-location" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-10 p-2.5" placeholder="Contoh: Bilik Mesyuarat Utama">
+                                </div>
+                            </div>
+
+                            <!-- Status -->
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Status Semasa <span class="text-red-500">*</span></label>
+                                <select id="task-status" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                    <option value="akan">Akan Datang (Belum Mula)</option>
+                                    <option value="sedang">Sedang Berlangsung (Dalam Tindakan)</option>
+                                    <option value="selesai">Selesai</option>
+                                </select>
+                            </div>
+
+                            <!-- Catatan -->
+                            <div class="md:col-span-2">
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Catatan / Minit</label>
+                                <textarea id="task-notes" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" placeholder="Sebarang nota tambahan berkaitan tugasan ini..."></textarea>
+                            </div>
+
+                            <!-- Muat Naik Dokumen -->
+                            <div class="md:col-span-2">
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Dokumen Berkaitan (Pilihan)</label>
+                                <div class="flex items-center justify-center w-full">
+                                    <label for="task-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk muat naik</span></p>
+                                            <p class="text-xs text-gray-500">PDF, DOCX, XLSX (Mak. 10MB)</p>
+                                        </div>
+                                        <input id="task-file" type="file" class="hidden" onchange="updateFileName(this)" />
+                                    </label>
+                                </div>
+                                <p id="file-name-display" class="mt-2 text-sm text-primary font-medium hidden">Fail dipilih: <span></span></p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex justify-end">
+                            <button type="submit" class="text-white bg-primary hover:bg-primary_dark focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-3 text-center flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Rekod
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast Notification (Replacement for alert) -->
+    <div id="toast" class="fixed bottom-20 md:bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center w-full max-w-xs p-4 space-x-3 text-gray-500 bg-white rounded-lg shadow-xl border border-gray-100 z-50 pointer-events-none">
+        <div id="toast-icon" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg">
+            <!-- Icon injected by JS -->
+        </div>
+        <div id="toast-message" class="ml-3 text-sm font-normal text-gray-800"></div>
+    </div>
+
+    <!-- Modal for Document Actions (Simulating Download) -->
+    <div id="download-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+        <div class="relative p-4 w-full max-w-md">
+            <div class="relative bg-white rounded-xl shadow-xl">
+                <button type="button" onclick="closeModal()" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-download text-3xl text-green-500"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900">Muat Turun Berjaya!</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Fail <span id="modal-filename" class="font-semibold text-gray-800"></span> telah selamat disimpan ke dalam peranti anda.</p>
+                    <button onclick="closeModal()" type="button" class="text-white bg-primary hover:bg-primary_dark focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Editing Document / Task -->
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center w-full h-full bg-black bg-opacity-50 p-4">
+        <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-5 border-b border-gray-100">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                    <i class="fa-solid fa-pen-to-square text-primary mr-2"></i> Kemaskini Rekod & Dokumen
+                </h3>
+                <button type="button" onclick="closeEditModal()" class="text-gray-400 bg-transparent hover:bg-gray-100 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form id="edit-task-form" onsubmit="handleUpdateTask(event)" class="p-6 space-y-4">
+                <input type="hidden" id="edit-task-id" />
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-900">Tajuk Tugasan / Program</label>
+                    <input type="text" id="edit-task-title" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">PIC (Person In Charge)</label>
+                        <input type="text" id="edit-task-pic" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Kategori</label>
+                        <select id="edit-task-category" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                            <option value="Mesyuarat">Mesyuarat</option>
+                            <option value="Bengkel">Bengkel</option>
+                            <option value="Kursus">Kursus</option>
+                            <option value="Taklimat">Taklimat</option>
+                            <option value="SLU">SLU</option>
+                            <option value="Kokurikulum">Kokurikulum</option>
+                            <option value="Koakademik">Koakademik</option>
+                            <option value="Peribadi">Peribadi</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Tarikh</label>
+                        <input type="date" id="edit-task-date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Masa Mula</label>
+                        <input type="time" id="edit-task-time-start" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Masa Tamat</label>
+                        <input type="time" id="edit-task-time-end" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Tempat</label>
+                        <input type="text" id="edit-task-location" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" placeholder="Contoh: Bilik Mesyuarat">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Status Semasa</label>
+                        <select id="edit-task-status" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                            <option value="akan">Akan Datang (Belum Mula)</option>
+                            <option value="sedang">Sedang Berlangsung (Dalam Tindakan)</option>
+                            <option value="selesai">Selesai</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-900">Nama Dokumen / Fail</label>
+                    <input type="text" id="edit-task-filename" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" placeholder="Contoh: Surat_Kebenaran.pdf">
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-900">Catatan / Minit</label>
+                    <textarea id="edit-task-notes" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-3 border-t border-gray-100">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary_dark"><i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DATA MANAGEMENT (LOKAL & CLOUD) ---
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mypa-app-cloud';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        
+        let userId = null;
+        let tasks = JSON.parse(localStorage.getItem('mypa_tasks')) || [];
+        
+        if (tasks.length === 0) {
+            const today = new Date().toISOString().split('T')[0];
+            const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
+            
+            tasks = [
+                { id: '1', title: 'Mesyuarat Kewangan Syarikat Q3', pic: 'Ahmad Albab', category: 'Mesyuarat', status: 'sedang', date: today, notes: 'Bincangkan bajet pengiklanan dan latihan staf baru.', fileName: 'Laporan_Kewangan_Q3.pdf' },
+                { id: '2', title: 'Menyiapkan Kertas Kerja Program Bina Semangat', pic: 'Siti Nurhaliza', category: 'Kursus', status: 'akan', date: tomorrow, notes: 'Rujuk format tahun lepas.', fileName: 'Draf_Kertas_Kerja.docx' }
+            ];
+            localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
+        }
+
+        let syncSaveTask = null;
+        let syncDeleteTask = null;
+
+        async function saveTaskDB(task) {
+            localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
+            if (syncSaveTask) await syncSaveTask(task);
+        }
+
+        async function deleteTaskDB(taskId) {
+            localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
+            if (syncDeleteTask) await syncDeleteTask(taskId);
+        }
+
+        // Pemuatan Firebase secara Dinamik (Tidak akan melambatkan fungsi klik butang UI)
+        if (firebaseConfig) {
+            Promise.all([
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"),
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"),
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js")
+            ]).then(([appMod, authMod, fsMod]) => {
+                const app = appMod.initializeApp(firebaseConfig);
+                const auth = authMod.getAuth(app);
+                const db = fsMod.getFirestore(app);
+
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await authMod.signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await authMod.signInAnonymously(auth);
+                    }
+                };
+
+                initAuth().then(() => {
+                    userId = auth.currentUser.uid;
+                    const tasksRef = fsMod.collection(db, 'artifacts', appId, 'users', userId, 'tasks');
+                    
+                    // Override fungsi lalai supaya tersimpan di Awan (Cloud)
+                    syncSaveTask = async (task) => {
+                        await fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', userId, 'tasks', task.id), task);
+                    };
+                    syncDeleteTask = async (taskId) => {
+                        await fsMod.deleteDoc(fsMod.doc(db, 'artifacts', appId, 'users', userId, 'tasks', taskId));
+                    };
+
+                    // Sinkronisasi Data Masa Nyata (Real-time Sync)
+                    fsMod.onSnapshot(tasksRef, (snapshot) => {
+                        tasks = [];
+                        snapshot.forEach((docSnap) => {
+                            tasks.push(docSnap.data());
+                        });
+                        localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
+                        
+                        // Kemaskini paparan jika data berubah dari peranti lain
+                        if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
+                        if (document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
+                        if (document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search').value);
+                    }, (error) => console.error("Ralat Cloud Sync:", error));
+                });
+            }).catch(err => console.error("Pemuatan sistem Firebase gagal:", err));
+        }
+
+        // --- 2. UI UTILITIES & NAVIGATION ---
+        
+        const tabs = ['dashboard', 'todo', 'docs', 'admin'];
+        
+        function switchTab(targetTab) {
+            // Hide all tabs, show target
+            tabs.forEach(tab => {
+                document.getElementById(tab).classList.remove('active');
+                
+                // Desktop nav styling
+                const deskNav = document.getElementById(`nav-${tab}`);
+                if(deskNav) {
+                    deskNav.className = "w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors";
+                }
+                
+                // Mobile nav styling
+                const mobNav = document.getElementById(`mob-nav-${tab}`);
+                if(mobNav) {
+                    mobNav.className = "flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors";
+                }
+            });
+
+            document.getElementById(targetTab).classList.add('active');
+            
+            // Set active desktop styling
+            const activeDesk = document.getElementById(`nav-${targetTab}`);
+            if(activeDesk) {
+                activeDesk.className = "w-full flex items-center space-x-3 px-4 py-3 bg-primary text-white rounded-lg transition-colors shadow-md";
+            }
+            
+            // Set active mobile styling
+            const activeMob = document.getElementById(`mob-nav-${targetTab}`);
+            if(activeMob) {
+                activeMob.className = "flex flex-col items-center p-3 text-primary w-1/4";
+            }
+
+            // Refresh specific tab data if needed
+            if (targetTab === 'dashboard') renderDashboard();
+            if (targetTab === 'todo') renderTodo(currentTodoFilter);
+            if (targetTab === 'docs') renderDocs();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const iconContainer = document.getElementById('toast-icon');
+            const messageEl = document.getElementById('toast-message');
+            
+            messageEl.textContent = message;
+            
+            if (type === 'success') {
+                iconContainer.className = "inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg";
+                iconContainer.innerHTML = '<i class="fa-solid fa-check"></i>';
+            } else {
+                iconContainer.className = "inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function formatDateMelayu(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date(dateString);
+            
+            // Basic malay months array
+            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+            
+            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'akan') return '<span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-yellow-200">Akan Datang</span>';
+            if (status === 'sedang') return '<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-blue-200">Sedang Berlangsung</span>';
+            if (status === 'selesai') return '<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-green-200">Selesai</span>';
+            return '';
+        }
+
+        // --- 3. DASHBOARD LOGIC ---
+        
+        function updateClock() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            document.getElementById('live-time').innerText = now.toLocaleTimeString('en-US', timeOptions);
+            
+            const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+            
+            const dayName = days[now.getDay()];
+            const date = now.getDate();
+            const monthName = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            document.getElementById('live-date').innerText = `${dayName}, ${date} ${monthName} ${year}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        let currentCalMonth = new Date().getMonth();
+        let currentCalYear = new Date().getFullYear();
+
+        function renderCalendar() {
+            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+            document.getElementById('calendar-month-year').innerText = `${months[currentCalMonth]} ${currentCalYear}`;
+            
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            
+            const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay(); // 0(Sun) - 6(Sat)
+            const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+            
+            // Empty slots for previous month
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="p-1"></div>`;
+            }
+            
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const cellDateStr = `${currentCalYear}-${String(currentCalMonth+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                
+                // Highlight today
+                let isTodayClass = '';
+                if (cellDateStr === todayStr) {
+                    isTodayClass = 'bg-primary text-white font-bold rounded-full shadow-md';
+                }
+                
+                // Check if has task
+                const hasTask = tasks.some(t => t.date === cellDateStr);
+                const dotIndicator = hasTask && cellDateStr !== todayStr ? '<div class="w-1 h-1 bg-red-500 rounded-full mx-auto mt-0.5"></div>' : '';
+
+                grid.innerHTML += `
+                    <div class="p-1.5 w-8 h-8 mx-auto flex flex-col items-center justify-center ${isTodayClass} ${hasTask && !isTodayClass ? 'font-bold text-primary' : ''}">
+                        ${i}
+                        ${dotIndicator}
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(dir) {
+            currentCalMonth += dir;
+            if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
+            if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; }
+            renderCalendar();
+        }
+
+        function renderDashboard() {
+            renderCalendar();
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayTasks = tasks.filter(t => t.date === todayStr);
+            
+            document.getElementById('today-count').innerText = `${todayTasks.length} Tugasan`;
+            const container = document.getElementById('today-tasks-container');
+            container.innerHTML = '';
+
+            if (todayTasks.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-6 rounded-xl border border-dashed border-gray-300 text-center text-gray-500">
+                        <i class="fa-regular fa-face-smile text-3xl mb-2 text-gray-300"></i>
+                        <p>Tiada program atau tugasan direkodkan untuk hari ini.</p>
+                    </div>`;
+                return;
+            }
+
+            todayTasks.forEach(t => {
+                const docBadge = t.fileName ? `<span class="inline-flex items-center gap-1 bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs mt-2"><i class="fa-solid fa-paperclip"></i> ${t.fileName}</span>` : '';
+                
+                let timeLocString = '';
+                if (t.timeStart || t.location) {
+                    timeLocString = `<div class="text-xs text-gray-500 mt-1 space-x-3">
+                        ${t.timeStart ? `<span><i class="fa-regular fa-clock"></i> ${t.timeStart}${t.timeEnd ? ' - '+t.timeEnd : ''}</span>` : ''}
+                        ${t.location ? `<span><i class="fa-solid fa-location-dot"></i> ${t.location}</span>` : ''}
+                    </div>`;
+                }
+
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-xl border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-lg">${t.title}</h4>
+                                <p class="text-sm text-gray-500 mt-1"><i class="fa-regular fa-user mr-1"></i> PIC: ${t.pic}</p>
+                                ${timeLocString}
+                            </div>
+                            ${getStatusBadge(t.status)}
+                        </div>
+                        ${docBadge}
+                    </div>
+                `;
+            });
+        }
+
+        // --- 4. TO-DO LIST LOGIC ---
+        
+        let currentTodoFilter = 'semua';
+
+        function filterTodo(status) {
+            currentTodoFilter = status;
+            
+            // Update UI buttons
+            const buttons = document.querySelectorAll('.todo-filter');
+            buttons.forEach(btn => {
+                btn.className = "todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm";
+            });
+            
+            const activeBtn = document.getElementById(`filter-${status}`);
+            activeBtn.className = "todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-gray-800 text-white transition-colors shadow-sm";
+
+            renderTodo(status);
+        }
+
+        function renderTodo(filterStatus) {
+            const container = document.getElementById('todo-container');
+            const emptyState = document.getElementById('todo-empty');
+            container.innerHTML = '';
+
+            let filteredTasks = tasks;
+            if (filterStatus !== 'semua') {
+                filteredTasks = tasks.filter(t => t.status === filterStatus);
+            }
+
+            // Sort by date (nearest first)
+            filteredTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            if (filteredTasks.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                container.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                
+                filteredTasks.forEach(t => {
+                    const isCompleted = t.status === 'selesai';
+                    container.innerHTML += `
+                        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all ${isCompleted ? 'opacity-70' : ''}">
+                            <div class="flex justify-between items-start mb-3">
+                                ${getStatusBadge(t.status)}
+                                <span class="text-xs font-semibold text-primary bg-indigo-50 px-2 py-1 rounded">${t.category}</span>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-lg mb-1 ${isCompleted ? 'line-through text-gray-500' : ''}">${t.title}</h4>
+                            
+                            ${t.timeStart || t.location ? `
+                            <div class="flex flex-wrap gap-2 text-xs text-indigo-600 bg-indigo-50 p-2 rounded-lg mb-2 w-max">
+                                ${t.timeStart ? `<span><i class="fa-regular fa-clock mr-1"></i>${t.timeStart}${t.timeEnd ? ' - '+t.timeEnd : ''}</span>` : ''}
+                                ${t.location ? `<span><i class="fa-solid fa-location-dot mr-1"></i>${t.location}</span>` : ''}
+                            </div>
+                            ` : ''}
+
+                            <p class="text-sm text-gray-500 mb-3 line-clamp-2">${t.notes || 'Tiada catatan.'}</p>
+                            
+                            <div class="flex items-center justify-between text-xs text-gray-500 mt-auto pt-3 border-t border-gray-50">
+                                <span><i class="fa-regular fa-calendar mr-1"></i> ${formatDateMelayu(t.date)}</span>
+                                <span><i class="fa-regular fa-user mr-1"></i> ${t.pic}</span>
+                            </div>
+
+                            <!-- Action dropdown / Status Toggle overlay (simple click to advance status) -->
+                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex space-x-2">
+                                    ${t.status !== 'selesai' ? 
+                                      `<button onclick="advanceStatus('${t.id}')" class="bg-green-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-green-600 tooltip" title="Tanda Selesai"><i class="fa-solid fa-check"></i></button>` 
+                                      : ''}
+                                    <button onclick="deleteTask('${t.id}')" class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-red-600"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function advanceStatus(id) {
+            const idx = tasks.findIndex(t => t.id === id);
+            if (idx > -1) {
+                // If it was 'akan', go to 'sedang'. If 'sedang', go to 'selesai'.
+                if(tasks[idx].status === 'akan') tasks[idx].status = 'sedang';
+                else if(tasks[idx].status === 'sedang') tasks[idx].status = 'selesai';
+                
+                saveTaskDB(tasks[idx]).then(() => {
+                    if (!userId) renderTodo(currentTodoFilter);
+                    showToast('Status tugasan dikemaskini.');
+                });
+            }
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            deleteTaskDB(id).then(() => {
+                if (!userId) renderTodo(currentTodoFilter);
+                showToast('Tugasan berjaya dipadam.');
+            });
+        }
+
+        // --- 5. DOCUMENTS LOGIC ---
+        
+        function renderDocs(searchQuery = '') {
+            const tbody = document.getElementById('docs-table-body');
+            const emptyState = document.getElementById('docs-empty');
+            tbody.innerHTML = '';
+
+            // Filter tasks that have a fileName
+            let docTasks = tasks.filter(t => t.fileName && t.fileName.trim() !== '');
+
+            // Apply search
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                docTasks = docTasks.filter(t => 
+                    t.fileName.toLowerCase().includes(q) || 
+                    t.title.toLowerCase().includes(q) ||
+                    t.pic.toLowerCase().includes(q)
+                );
+            }
+
+            if (docTasks.length === 0) {
+                tbody.parentElement.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                tbody.parentElement.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+
+                docTasks.forEach(t => {
+                    // Determine icon based on extension
+                    const ext = t.fileName.split('.').pop().toLowerCase();
+                    let icon = 'fa-file';
+                    let iconColor = 'text-gray-500';
+                    if (['pdf'].includes(ext)) { icon = 'fa-file-pdf'; iconColor = 'text-red-500'; }
+                    else if (['doc', 'docx'].includes(ext)) { icon = 'fa-file-word'; iconColor = 'text-blue-500'; }
+                    else if (['xls', 'xlsx'].includes(ext)) { icon = 'fa-file-excel'; iconColor = 'text-green-500'; }
+                    else if (['png', 'jpg', 'jpeg'].includes(ext)) { icon = 'fa-file-image'; iconColor = 'text-purple-500'; }
+
+                    tbody.innerHTML += `
+                        <tr class="bg-white border-b hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center">
+                                <i class="fa-solid ${icon} ${iconColor} text-xl w-6 mr-3"></i>
+                                <div>
+                                    <span class="font-semibold block text-gray-800">${t.fileName}</span>
+                                    <span class="text-xs text-gray-400 font-normal"><i class="fa-regular fa-user mr-1"></i>${t.pic}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600">
+                                ${t.title}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                ${formatDateMelayu(t.date)}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <button onclick="simulateDownload('${t.fileName}')" class="font-medium text-primary bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors" title="Muat Turun Fail">
+                                        <i class="fa-solid fa-download mr-1.5"></i> Muat Turun
+                                    </button>
+                                    <button onclick="openEditModal('${t.id}')" class="font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors" title="Kemaskini Rekod">
+                                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> Kemaskini
+                                    </button>
+                                    <button onclick="deleteDocTask('${t.id}')" class="font-medium text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors" title="Hapus Dokumen">
+                                        <i class="fa-solid fa-trash mr-1.5"></i> Hapus
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        function searchDocs() {
+            const q = document.getElementById('doc-search').value;
+            renderDocs(q);
+        }
+
+        function simulateDownload(filename) {
+            document.getElementById('modal-filename').innerText = filename;
+            document.getElementById('download-modal').classList.remove('hidden');
+            document.body.classList.add('modal-active');
+        }
+
+        function closeModal() {
+            document.getElementById('download-modal').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        function deleteDocTask(id) {
+            const idx = tasks.findIndex(t => t.id === id);
+            if (idx > -1) {
+                tasks[idx].fileName = '';
+                saveTaskDB(tasks[idx]).then(() => {
+                    if (!userId) {
+                        renderDocs(document.getElementById('doc-search').value);
+                        renderDashboard();
+                        renderTodo(currentTodoFilter);
+                    }
+                    showToast('Dokumen berjaya dihapuskan.');
+                });
+            }
+        }
+
+        function openEditModal(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('edit-task-id').value = task.id;
+            document.getElementById('edit-task-title').value = task.title;
+            document.getElementById('edit-task-pic').value = task.pic;
+            document.getElementById('edit-task-category').value = task.category;
+            document.getElementById('edit-task-date').value = task.date;
+            document.getElementById('edit-task-time-start').value = task.timeStart || '';
+            document.getElementById('edit-task-time-end').value = task.timeEnd || '';
+            document.getElementById('edit-task-location').value = task.location || '';
+            document.getElementById('edit-task-status').value = task.status;
+            document.getElementById('edit-task-filename').value = task.fileName || '';
+            document.getElementById('edit-task-notes').value = task.notes || '';
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+            document.body.classList.add('modal-active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        function handleUpdateTask(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-task-id').value;
+            const idx = tasks.findIndex(t => t.id === id);
+
+            if (idx > -1) {
+                tasks[idx].title = document.getElementById('edit-task-title').value;
+                tasks[idx].pic = document.getElementById('edit-task-pic').value;
+                tasks[idx].category = document.getElementById('edit-task-category').value;
+                tasks[idx].date = document.getElementById('edit-task-date').value;
+                tasks[idx].timeStart = document.getElementById('edit-task-time-start').value;
+                tasks[idx].timeEnd = document.getElementById('edit-task-time-end').value;
+                tasks[idx].location = document.getElementById('edit-task-location').value;
+                tasks[idx].status = document.getElementById('edit-task-status').value;
+                tasks[idx].fileName = document.getElementById('edit-task-filename').value;
+                tasks[idx].notes = document.getElementById('edit-task-notes').value;
+
+                saveTaskDB(tasks[idx]).then(() => {
+                    closeEditModal();
+                    if (!userId) {
+                        renderDocs(document.getElementById('doc-search').value);
+                        renderDashboard();
+                        renderTodo(currentTodoFilter);
+                    }
+                    showToast('Rekod berjaya dikemaskini!');
+                });
+            }
+        }
+
+        // --- 6. ADMIN / ADD TASK LOGIC ---
+        
+        let selectedFileName = '';
+
+        function updateFileName(input) {
+            const display = document.getElementById('file-name-display');
+            if (input.files && input.files[0]) {
+                selectedFileName = input.files[0].name;
+                display.querySelector('span').innerText = selectedFileName;
+                display.classList.remove('hidden');
+            } else {
+                selectedFileName = '';
+                display.classList.add('hidden');
+            }
+        }
+
+        function handleAddTask(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('task-title').value;
+            const pic = document.getElementById('task-pic').value;
+            const category = document.getElementById('task-category').value;
+            const date = document.getElementById('task-date').value;
+            const timeStart = document.getElementById('task-time-start').value;
+            const timeEnd = document.getElementById('task-time-end').value;
+            const location = document.getElementById('task-location').value;
+            const status = document.getElementById('task-status').value;
+            const notes = document.getElementById('task-notes').value;
+
+            const newTask = {
+                id: Date.now().toString(),
+                title,
+                pic,
+                category,
+                date,
+                timeStart,
+                timeEnd,
+                location,
+                status,
+                notes,
+                fileName: selectedFileName
+            };
+
+            tasks.push(newTask);
+            saveTaskDB(newTask).then(() => {
+                // Reset Form
+                document.getElementById('add-task-form').reset();
+                selectedFileName = '';
+                document.getElementById('file-name-display').classList.add('hidden');
+
+                showToast('Maklumat berjaya direkodkan dalam sistem!');
+                
+                // Switch back to dashboard after 1s to see the update
+                setTimeout(() => {
+                    switchTab('dashboard');
+                }, 1000);
+            });
+        }
+
+        // --- 7. INITIALIZATION ---
+        window.onload = () => {
+            renderDashboard();
+            // Start on dashboard
+            document.getElementById('nav-dashboard').className = "w-full flex items-center space-x-3 px-4 py-3 bg-primary text-white rounded-lg transition-colors shadow-md";
+        }
+    </script>
+</body>
+</html>
