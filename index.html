@@ -376,10 +376,14 @@
                             </div>
 
                             <!-- Tarikh, Masa & Tempat -->
-                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarikh <span class="text-red-500">*</span></label>
-                                    <input type="date" id="task-date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarikh Mula <span class="text-red-500">*</span></label>
+                                    <input type="date" id="task-date-start" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                </div>
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarikh Tamat</label>
+                                    <input type="date" id="task-date-end" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
                                 </div>
                                 <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Masa Mula</label>
@@ -538,10 +542,14 @@
                         </select>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                        <label class="block mb-1 text-sm font-medium text-gray-900">Tarikh</label>
-                        <input type="date" id="edit-task-date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Tarikh Mula</label>
+                        <input type="date" id="edit-task-date-start" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Tarikh Tamat</label>
+                        <input type="date" id="edit-task-date-end" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
                     </div>
                     <div>
                         <label class="block mb-1 text-sm font-medium text-gray-900">Masa Mula</label>
@@ -875,6 +883,21 @@
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
         }
 
+        function formatDateRange(dateStartStr, dateEndStr) {
+            if (!dateStartStr) return '';
+            const startStr = formatDateMelayu(dateStartStr);
+            if (!dateEndStr || dateStartStr === dateEndStr) return startStr;
+            const endStr = formatDateMelayu(dateEndStr);
+            return `${startStr} - ${endStr}`;
+        }
+
+        function isTaskOnDate(task, targetDateStr) {
+            const startDate = task.dateStart || task.date;
+            const endDate = task.dateEnd || startDate;
+            if (!startDate) return false;
+            return targetDateStr >= startDate && targetDateStr <= endDate;
+        }
+
         function updateClock() {
             const now = new Date();
             const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
@@ -931,7 +954,7 @@
                     isTodayClass = 'gradient-brand text-white font-bold rounded-xl shadow-md shadow-indigo-500/30';
                 }
                 
-                const hasTask = tasks.some(t => t.date === cellDateStr);
+                const hasTask = tasks.some(t => isTaskOnDate(t, cellDateStr));
                 const dotIndicator = hasTask && cellDateStr !== todayStr ? '<div class="w-1.5 h-1.5 bg-indigo-600 rounded-full mx-auto mt-0.5"></div>' : '';
 
                 grid.innerHTML += `
@@ -947,7 +970,7 @@
             renderCalendar();
             
             const todayStr = new Date().toISOString().split('T')[0];
-            const todayTasks = tasks.filter(t => t.date === todayStr);
+            const todayTasks = tasks.filter(t => isTaskOnDate(t, todayStr));
             
             const countEl = document.getElementById('today-count');
             if (countEl) countEl.innerText = `${todayTasks.length} Tugasan`;
@@ -1041,7 +1064,7 @@
                                 <p class="text-sm text-slate-500 mb-3 line-clamp-2">${t.notes || 'Tiada catatan.'}</p>
                                 
                                 <div class="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-400 font-medium pt-3 border-t border-slate-100 w-full mb-4">
-                                    <span class="whitespace-nowrap text-slate-600"><i class="fa-regular fa-calendar mr-1.5 text-indigo-500"></i> ${formatDateMelayu(t.date)}</span>
+                                    <span class="whitespace-nowrap text-slate-600"><i class="fa-regular fa-calendar mr-1.5 text-indigo-500"></i> ${formatDateRange(t.dateStart || t.date, t.dateEnd)}</span>
                                     <span class="line-clamp-1 break-all text-slate-600"><i class="fa-regular fa-user mr-1.5 text-indigo-400"></i> ${t.pic}</span>
                                 </div>
                             </div>
@@ -1146,7 +1169,7 @@
                                 ${t.title}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-                                ${formatDateMelayu(t.date)}
+                                ${formatDateRange(t.dateStart || t.date, t.dateEnd)}
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2 flex-wrap sm:flex-nowrap">
@@ -1206,7 +1229,8 @@
             document.getElementById('edit-task-title').value = task.title;
             document.getElementById('edit-task-pic').value = task.pic;
             document.getElementById('edit-task-category').value = task.category;
-            document.getElementById('edit-task-date').value = task.date;
+            document.getElementById('edit-task-date-start').value = task.dateStart || task.date || '';
+            document.getElementById('edit-task-date-end').value = task.dateEnd || task.dateStart || task.date || '';
             document.getElementById('edit-task-time-start').value = task.timeStart || '';
             document.getElementById('edit-task-time-end').value = task.timeEnd || '';
             document.getElementById('edit-task-location').value = task.location || '';
@@ -1230,10 +1254,15 @@
             const idx = tasks.findIndex(t => t.id === id);
 
             if (idx > -1) {
+                const dateStart = document.getElementById('edit-task-date-start').value;
+                const dateEnd = document.getElementById('edit-task-date-end').value || dateStart;
+
                 tasks[idx].title = document.getElementById('edit-task-title').value;
                 tasks[idx].pic = document.getElementById('edit-task-pic').value;
                 tasks[idx].category = document.getElementById('edit-task-category').value;
-                tasks[idx].date = document.getElementById('edit-task-date').value;
+                tasks[idx].date = dateStart;
+                tasks[idx].dateStart = dateStart;
+                tasks[idx].dateEnd = dateEnd;
                 tasks[idx].timeStart = document.getElementById('edit-task-time-start').value;
                 tasks[idx].timeEnd = document.getElementById('edit-task-time-end').value;
                 tasks[idx].location = document.getElementById('edit-task-location').value;
@@ -1272,7 +1301,8 @@
             const title = document.getElementById('task-title').value;
             const pic = document.getElementById('task-pic').value;
             const category = document.getElementById('task-category').value;
-            const date = document.getElementById('task-date').value;
+            const dateStart = document.getElementById('task-date-start').value;
+            const dateEnd = document.getElementById('task-date-end').value || dateStart;
             const timeStart = document.getElementById('task-time-start').value;
             const timeEnd = document.getElementById('task-time-end').value;
             const location = document.getElementById('task-location').value;
@@ -1284,7 +1314,9 @@
                 title,
                 pic,
                 category,
-                date,
+                date: dateStart,
+                dateStart,
+                dateEnd,
                 timeStart,
                 timeEnd,
                 location,
@@ -1356,14 +1388,14 @@
             doc.setTextColor(100, 116, 139);
             doc.text(`Dicetak pada: ${formatDateMelayu(new Date().toISOString())}`, 14, 27);
             
-            const tableData = yearlyTasks.sort((a, b) => new Date(a.date) - new Date(b.date)).map((t, index) => {
+            const tableData = yearlyTasks.sort((a, b) => new Date(a.dateStart || a.date) - new Date(b.dateStart || b.date)).map((t, index) => {
                 let statusLabel = 'Akan Datang';
                 if (t.status === 'sedang') statusLabel = 'Berlangsung';
                 if (t.status === 'selesai') statusLabel = 'Selesai';
 
                 return [
                     index + 1,
-                    t.date,
+                    formatDateRange(t.dateStart || t.date, t.dateEnd),
                     t.title,
                     t.category,
                     t.pic,
