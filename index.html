@@ -646,8 +646,8 @@
             const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
             
             tasks = [
-                { id: '1', title: 'Mesyuarat Kewangan Syarikat Q3', pic: 'Ahmad Albab', category: 'Mesyuarat', status: 'sedang', date: today, notes: 'Bincangkan bajet pengiklanan dan latihan staf baru.', fileName: 'Laporan_Kewangan_Q3.pdf' },
-                { id: '2', title: 'Menyiapkan Kertas Kerja Program Bina Semangat', pic: 'Siti Nurhaliza', category: 'Kursus', status: 'akan', date: tomorrow, notes: 'Rujuk format tahun lepas.', fileName: 'Draf_Kertas_Kerja.docx' }
+                { id: '1', title: 'Mesyuarat Kewangan Syarikat Q3', pic: 'Ahmad Albab', category: 'Mesyuarat', status: 'sedang', date: today, dateStart: today, dateEnd: today, notes: 'Bincangkan bajet pengiklanan dan latihan staf baru.', fileName: 'Laporan_Kewangan_Q3.pdf' },
+                { id: '2', title: 'Menyiapkan Kertas Kerja Program Bina Semangat', pic: 'Siti Nurhaliza', category: 'Kursus', status: 'akan', date: tomorrow, dateStart: tomorrow, dateEnd: tomorrow, notes: 'Rujuk format tahun lepas.', fileName: 'Draf_Kertas_Kerja.docx' }
             ];
             localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
         }
@@ -694,12 +694,12 @@
             if (document.getElementById('docs') && document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search')?.value || '');
         }
 
-        // Pemuatan Firebase secara Selamat Dengan Catching Ralat Penuh
+        // Pemuatan Firebase versi rasmi terkini (10.12.2) secara selamat
         if (firebaseConfig) {
             Promise.all([
-                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"),
-                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"),
-                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js")
+                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
             ]).then(([appMod, authMod, fsMod]) => {
                 const app = appMod.initializeApp(firebaseConfig);
                 const auth = authMod.getAuth(app);
@@ -765,7 +765,7 @@
                     };
                 }).catch(console.warn);
             }).catch(err => {
-                console.warn("Pemuatan modul Firebase terhalang oleh persekitaran pratonton, mod Local-First diaktifkan:", err);
+                console.warn("Pemuatan modul Firebase menggunakan mod Local-First:", err);
             });
         }
 
@@ -1032,7 +1032,7 @@
                 filteredTasks = tasks.filter(t => t.status === filterStatus);
             }
 
-            filteredTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+            filteredTasks.sort((a, b) => new Date(a.dateStart || a.date) - new Date(b.dateStart || b.date));
 
             if (filteredTasks.length === 0) {
                 container.classList.add('hidden');
@@ -1348,8 +1348,9 @@
             let years = new Set([currentYear]);
             
             tasks.forEach(t => {
-                if (t.date) {
-                    const y = parseInt(t.date.split('-')[0]);
+                const dateVal = t.dateStart || t.date;
+                if (dateVal) {
+                    const y = parseInt(dateVal.split('-')[0]);
                     if (!isNaN(y)) years.add(y);
                 }
             });
@@ -1372,8 +1373,11 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            const year = document.getElementById('report-year')?.value || new Date().getFullYear();
-            const yearlyTasks = tasks.filter(t => t.date && t.date.startsWith(year));
+            const year = document.getElementById('report-year')?.value || new Date().getFullYear().toString();
+            const yearlyTasks = tasks.filter(t => {
+                const d = t.dateStart || t.date;
+                return d && d.startsWith(year);
+            });
             
             if (yearlyTasks.length === 0) {
                 showToast(`Tiada rekod dijumpai untuk tahun ${year}.`, 'error');
