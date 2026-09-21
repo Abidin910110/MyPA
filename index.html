@@ -11,8 +11,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Ikon Aplikasi untuk Shortcut / Pemasangan Peranti -->
-    <link rel="icon" type="image/png" href="profil.png.png">
-    <link rel="apple-touch-icon" href="profil.png.png">
+    <link rel="icon" type="image/png" href="profil.png">
+    <link rel="apple-touch-icon" href="profil.png">
     <meta name="theme-color" content="#3730a3">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -73,11 +73,16 @@
 </head>
 <body class="text-gray-800 h-screen flex overflow-hidden">
 
+    <!-- SVG Fallback Avatar (Abidin) Data URI -->
+    <script>
+        const fallbackAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%233730a3'/><circle cx='50' cy='38' r='20' fill='%23fcd34d'/><path d='M30,85 C30,62 40,55 50,55 C60,55 70,62 70,85 Z' fill='%231e293b'/><circle cx='42' cy='35' r='5' fill='none' stroke='%23000' stroke-width='2'/><circle cx='58' cy='35' r='5' fill='none' stroke='%23000' stroke-width='2'/><line x1='47' y1='35' x2='53' y2='35' stroke='%23000' stroke-width='2'/></svg>";
+    </script>
+
     <!-- Desktop Sidebar -->
     <aside class="hidden md:flex flex-col w-64 gradient-header text-white transition-all duration-300 shadow-2xl z-20">
         <div class="p-6 flex flex-col items-center border-b border-indigo-900/50">
             <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl font-bold mb-3 shadow-lg shadow-indigo-500/20 overflow-hidden ring-4 ring-indigo-500/30">
-                <img src="profil.png.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
+                <img src="profil.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=fallbackAvatar;">
             </div>
             <h1 class="text-2xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-indigo-400">MyPA</h1>
             <p class="text-xs text-indigo-300 mt-2 text-center italic font-light">"Forgive, yes. Forget, never."</p>
@@ -138,7 +143,7 @@
         <header class="md:hidden gradient-header text-white p-4 pt-safe flex justify-between items-center shadow-lg z-10">
             <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-sm font-bold overflow-hidden ring-2 ring-indigo-400/40 shadow-md">
-                    <img src="profil.png.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
+                    <img src="profil.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=fallbackAvatar;">
                 </div>
                 <h1 class="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300">MyPA</h1>
             </div>
@@ -578,7 +583,7 @@
             if (syncDeleteTask) await syncDeleteTask(taskId);
         }
 
-        // Pemuatan Firebase secara Dinamik (Tidak akan melambatkan fungsi klik butang UI)
+        // Pemuatan Firebase secara Dinamik
         if (firebaseConfig) {
             Promise.all([
                 import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"),
@@ -601,7 +606,6 @@
                     userId = auth.currentUser.uid;
                     const tasksRef = fsMod.collection(db, 'artifacts', appId, 'users', userId, 'tasks');
                     
-                    // Override fungsi lalai supaya tersimpan di Awan (Cloud)
                     syncSaveTask = async (task) => {
                         await fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', userId, 'tasks', task.id), task);
                     };
@@ -609,7 +613,6 @@
                         await fsMod.deleteDoc(fsMod.doc(db, 'artifacts', appId, 'users', userId, 'tasks', taskId));
                     };
 
-                    // Sinkronisasi Data Masa Nyata (Real-time Sync)
                     fsMod.onSnapshot(tasksRef, (snapshot) => {
                         tasks = [];
                         snapshot.forEach((docSnap) => {
@@ -617,7 +620,6 @@
                         });
                         localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
                         
-                        // Kemaskini paparan jika data berubah dari peranti lain
                         if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
                         if (document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
                         if (document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search').value);
@@ -649,17 +651,14 @@
         const tabs = ['dashboard', 'todo', 'docs', 'admin', 'pdf-report'];
         
         function switchTab(targetTab) {
-            // Hide all tabs, show target
             tabs.forEach(tab => {
                 document.getElementById(tab).classList.remove('active');
                 
-                // Desktop nav styling
                 const deskNav = document.getElementById(`nav-${tab}`);
                 if(deskNav) {
                     deskNav.className = "w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all";
                 }
                 
-                // Mobile nav styling
                 const mobNav = document.getElementById(`mob-nav-${tab}`);
                 if(mobNav) {
                     mobNav.className = "flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors";
@@ -668,19 +667,16 @@
 
             document.getElementById(targetTab).classList.add('active');
             
-            // Set active desktop styling
             const activeDesk = document.getElementById(`nav-${targetTab}`);
             if(activeDesk) {
                 activeDesk.className = "w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5";
             }
             
-            // Set active mobile styling
             const activeMob = document.getElementById(`mob-nav-${targetTab}`);
             if(activeMob) {
                 activeMob.className = "flex flex-col items-center p-2.5 text-indigo-600 font-semibold w-1/5";
             }
 
-            // Refresh specific tab data if needed
             if (targetTab === 'dashboard') renderDashboard();
             if (targetTab === 'todo') renderTodo(currentTodoFilter);
             if (targetTab === 'docs') renderDocs();
@@ -709,20 +705,9 @@
         }
 
         function formatDateMelayu(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const date = new Date(dateString);
-            
-            // Basic malay months array
             const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
-            
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-        }
-
-        function getStatusBadge(status) {
-            if (status === 'akan') return '<span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-yellow-200">Akan Datang</span>';
-            if (status === 'sedang') return '<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-blue-200">Sedang Berlangsung</span>';
-            if (status === 'selesai') return '<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-green-200">Selesai</span>';
-            return '';
         }
 
         // --- 3. DASHBOARD LOGIC ---
@@ -735,12 +720,7 @@
             const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
             const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
             
-            const dayName = days[now.getDay()];
-            const date = now.getDate();
-            const monthName = months[now.getMonth()];
-            const year = now.getFullYear();
-            
-            document.getElementById('live-date').innerText = `${dayName}, ${date} ${monthName} ${year}`;
+            document.getElementById('live-date').innerText = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
         }
         setInterval(updateClock, 1000);
         updateClock();
@@ -892,7 +872,6 @@
                                 <span class="line-clamp-1 break-all text-slate-600"><i class="fa-regular fa-user mr-1.5 text-indigo-400"></i> ${t.pic}</span>
                             </div>
 
-                            <!-- Action dropdown overlay -->
                             <div class="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <div class="flex space-x-3">
                                     ${t.status !== 'selesai' ? 
@@ -910,7 +889,6 @@
         function advanceStatus(id) {
             const idx = tasks.findIndex(t => t.id === id);
             if (idx > -1) {
-                // If it was 'akan', go to 'sedang'. If 'sedang', go to 'selesai'.
                 if(tasks[idx].status === 'akan') tasks[idx].status = 'sedang';
                 else if(tasks[idx].status === 'sedang') tasks[idx].status = 'selesai';
                 
@@ -936,10 +914,8 @@
             const emptyState = document.getElementById('docs-empty');
             tbody.innerHTML = '';
 
-            // Filter tasks that have a fileName
             let docTasks = tasks.filter(t => t.fileName && t.fileName.trim() !== '');
 
-            // Apply search
             if (searchQuery) {
                 const q = searchQuery.toLowerCase();
                 docTasks = docTasks.filter(t => 
@@ -957,7 +933,6 @@
                 emptyState.classList.add('hidden');
 
                 docTasks.forEach(t => {
-                    // Determine icon based on extension
                     const ext = t.fileName.split('.').pop().toLowerCase();
                     let icon = 'fa-file';
                     let iconColor = 'text-gray-500';
@@ -1130,14 +1105,12 @@
 
             tasks.push(newTask);
             saveTaskDB(newTask).then(() => {
-                // Reset Form
                 document.getElementById('add-task-form').reset();
                 selectedFileName = '';
                 document.getElementById('file-name-display').classList.add('hidden');
 
                 showToast('Maklumat berjaya direkodkan dalam sistem!');
                 
-                // Switch back to dashboard after 1s to see the update
                 setTimeout(() => {
                     switchTab('dashboard');
                 }, 1000);
@@ -1160,7 +1133,7 @@
                 }
             });
             
-            const sortedYears = Array.from(years).sort((a, b) => b - a); // Descending
+            const sortedYears = Array.from(years).sort((a, b) => b - a);
             
             yearSelect.innerHTML = '';
             sortedYears.forEach(y => {
@@ -1179,8 +1152,6 @@
             const doc = new jsPDF();
             
             const year = document.getElementById('report-year').value || new Date().getFullYear();
-            
-            // Filter tugas berdasarkan tahun yang dipilih
             const yearlyTasks = tasks.filter(t => t.date && t.date.startsWith(year));
             
             if (yearlyTasks.length === 0) {
@@ -1188,7 +1159,6 @@
                 return;
             }
 
-            // Tajuk Dokumen
             doc.setFontSize(16);
             doc.setTextColor(30, 41, 59);
             doc.text(`Laporan Tahunan MyPA - ${year}`, 14, 20);
@@ -1197,7 +1167,6 @@
             doc.setTextColor(100, 116, 139);
             doc.text(`Dicetak pada: ${formatDateMelayu(new Date().toISOString())}`, 14, 27);
             
-            // Format data jadual
             const tableData = yearlyTasks.sort((a, b) => new Date(a.date) - new Date(b.date)).map((t, index) => {
                 let statusLabel = 'Akan Datang';
                 if (t.status === 'sedang') statusLabel = 'Berlangsung';
@@ -1213,7 +1182,6 @@
                 ];
             });
             
-            // Jana Jadual
             doc.autoTable({
                 startY: 35,
                 head: [['No.', 'Tarikh', 'Tajuk / Program', 'Kategori', 'PIC', 'Status']],
@@ -1230,7 +1198,6 @@
                 }
             });
             
-            // Muat Turun
             doc.save(`Laporan_Tahunan_MyPA_${year}.pdf`);
             showToast(`Fail PDF Laporan Tahunan ${year} berjaya dijana!`);
         }
@@ -1238,9 +1205,8 @@
         // --- 9. INITIALIZATION ---
         window.onload = () => {
             renderDashboard();
-            populateReportYears(); // Pastikan droplist tahun sedia dimuatkan
-            // Start on dashboard
-            document.getElementById('nav-dashboard').className = "w-full flex items-center space-x-3 px-4 py-3 bg-primary text-white rounded-lg transition-colors shadow-md";
+            populateReportYears();
+            document.getElementById('nav-dashboard').className = "w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5";
         }
     </script>
 </body>
