@@ -78,12 +78,10 @@
 </head>
 <body class="text-gray-800 h-screen flex overflow-hidden">
 
-    <!-- SVG Fallback Avatar (Abidin) Data URI -->
     <script>
         const fallbackAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='200' height='200' fill='%231e1b4b' rx='40'/><circle cx='100' cy='95' r='55' fill='%23ffdfc4'/><circle cx='42' cy='95' r='12' fill='%23ffdfc4'/><circle cx='158' cy='95' r='12' fill='%23ffdfc4'/><path d='M45,85 C45,45 65,25 100,25 C135,25 155,45 155,85 C145,55 130,45 100,45 C70,45 55,55 45,85 Z' fill='%232a2421'/><path d='M50,55 Q65,30 90,40 Q115,25 130,38 Q150,45 152,65 Q135,45 115,50 Q90,35 65,55 Z' fill='%232a2421'/><rect x='52' y='75' width='40' height='30' rx='6' fill='none' stroke='%231e293b' stroke-width='6'/><rect x='108' y='75' width='40' height='30' rx='6' fill='none' stroke='%231e293b' stroke-width='6'/><line x1='92' y1='88' x2='108' y2='88' stroke='%231e293b' stroke-width='5'/><circle cx='72' cy='90' r='6' fill='%231e293b'/><circle cx='128' cy='90' r='6' fill='%231e293b'/><circle cx='74' cy='88' r='2' fill='%23ffffff'/><circle cx='130' cy='88' r='2' fill='%23ffffff'/><path d='M88,118 Q100,126 112,118' fill='none' stroke='%23a16207' stroke-width='3' stroke-linecap='round'/><path d='M55,68 Q72,62 90,68' fill='none' stroke='%232a2421' stroke-width='4' stroke-linecap='round'/><path d='M110,68 Q128,62 145,68' fill='none' stroke='%232a2421' stroke-width='4' stroke-linecap='round'/><path d='M35,200 L165,200 L155,150 L130,140 L100,165 L70,140 L45,150 Z' fill='%23334155'/><path d='M75,140 L100,195 L125,140 L100,148 Z' fill='%23ffffff'/><polygon points='95,145 105,145 108,195 100,200 92,195' fill='%232563eb'/><rect x='122' y='160' width='32' height='12' rx='2' fill='%230f172a' stroke='%2394a3b8' stroke-width='1'/><text x='138' y='169' font-size='6' font-family='sans-serif' font-weight='bold' fill='%23ffffff' text-anchor='middle'>ABIDIN</text></svg>";
     </script>
 
-    <!-- Desktop Sidebar -->
     <aside class="hidden md:flex flex-col w-64 gradient-header text-white transition-all duration-300 shadow-2xl z-20">
         <div class="p-6 flex flex-col items-center border-b border-indigo-900/50">
             <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl font-bold mb-3 shadow-lg shadow-indigo-500/20 overflow-hidden ring-4 ring-indigo-500/30">
@@ -94,23 +92,23 @@
         </div>
         
         <nav class="flex-1 px-4 py-6 space-y-2">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5">
+            <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5">
                 <i class="fa-solid fa-house w-5 text-indigo-200"></i>
                 <span class="font-medium">Dashboard</span>
             </button>
-            <button onclick="switchTab('todo')" id="nav-todo" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
+            <button type="button" onclick="switchTab('todo')" id="nav-todo" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
                 <i class="fa-solid fa-list-check w-5 text-indigo-400"></i>
                 <span class="font-medium">To-Do List</span>
             </button>
-            <button onclick="switchTab('docs')" id="nav-docs" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
+            <button type="button" onclick="switchTab('docs')" id="nav-docs" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
                 <i class="fa-solid fa-file-lines w-5 text-cyan-400"></i>
                 <span class="font-medium">Dokumen & Surat</span>
             </button>
-            <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
+            <button type="button" onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
                 <i class="fa-solid fa-gear w-5 text-amber-400"></i>
                 <span class="font-medium">Pentadbir Sistem</span>
             </button>
-            <button onclick="switchTab('pdf-report')" id="nav-pdf-report" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
+            <button type="button" onclick="switchTab('pdf-report')" id="nav-pdf-report" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all">
                 <i class="fa-solid fa-file-pdf w-5 text-rose-400"></i>
                 <span class="font-medium">Jana PDF Tahunan</span>
             </button>
@@ -127,25 +125,24 @@
         </div>
     </aside>
 
-    <!-- Mobile Bottom Navigation -->
     <nav class="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-indigo-100 z-50 flex justify-around pb-safe shadow-lg">
-        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center p-2.5 text-indigo-600 w-1/5">
+        <button type="button" onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center p-2.5 text-indigo-600 w-1/5">
             <i class="fa-solid fa-house text-lg mb-0.5"></i>
             <span class="text-[10px] font-semibold">Dashboard</span>
         </button>
-        <button onclick="switchTab('todo')" id="mob-nav-todo" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
+        <button type="button" onclick="switchTab('todo')" id="mob-nav-todo" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
             <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
             <span class="text-[10px] font-semibold">To-Do</span>
         </button>
-        <button onclick="switchTab('docs')" id="mob-nav-docs" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
+        <button type="button" onclick="switchTab('docs')" id="mob-nav-docs" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
             <i class="fa-solid fa-file-lines text-lg mb-0.5"></i>
             <span class="text-[10px] font-semibold">Dokumen</span>
         </button>
-        <button onclick="switchTab('admin')" id="mob-nav-admin" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
+        <button type="button" onclick="switchTab('admin')" id="mob-nav-admin" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
             <i class="fa-solid fa-gear text-lg mb-0.5"></i>
             <span class="text-[10px] font-semibold">Admin</span>
         </button>
-        <button onclick="switchTab('pdf-report')" id="mob-nav-pdf-report" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
+        <button type="button" onclick="switchTab('pdf-report')" id="mob-nav-pdf-report" class="flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors">
             <i class="fa-solid fa-file-pdf text-lg mb-0.5"></i>
             <span class="text-[10px] font-semibold">Laporan</span>
         </button>
@@ -170,7 +167,6 @@
 
         <div class="flex-1 overflow-y-auto scroll-content p-4 md:p-8 w-full max-w-6xl mx-auto">
             
-            <!-- 1. DASHBOARD TAB -->
             <div id="dashboard" class="tab-content active">
                 <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
@@ -210,9 +206,9 @@
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5">
                             <div class="flex justify-between items-center mb-4">
-                                <button onclick="changeMonth(-1)" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-indigo-600 flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button type="button" onclick="changeMonth(-1)" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-indigo-600 flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
                                 <h3 id="calendar-month-year" class="font-bold text-slate-800">September 2026</h3>
-                                <button onclick="changeMonth(1)" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-indigo-600 flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+                                <button type="button" onclick="changeMonth(1)" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-indigo-600 flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                             <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
                                 <div>Ahd</div><div>Isn</div><div>Sel</div><div>Rab</div><div>Kha</div><div>Jum</div><div>Sab</div>
@@ -225,7 +221,6 @@
                 </div>
             </div>
 
-            <!-- 2. TO-DO LIST TAB -->
             <div id="todo" class="tab-content">
                 <div class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Senarai Tugasan</h2>
@@ -234,10 +229,10 @@
 
                 <!-- Sub Navigation for To-Do -->
                 <div class="flex overflow-x-auto space-x-2 mb-6 pb-2 hide-scrollbar">
-                    <button onclick="filterTodo('semua')" id="filter-semua" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-gray-800 text-white transition-colors shadow-sm">Semua</button>
-                    <button onclick="filterTodo('akan')" id="filter-akan" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Akan Datang</button>
-                    <button onclick="filterTodo('sedang')" id="filter-sedang" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Sedang Berlangsung</button>
-                    <button onclick="filterTodo('selesai')" id="filter-selesai" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Selesai</button>
+                    <button type="button" onclick="filterTodo('semua')" id="filter-semua" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-gray-800 text-white transition-colors shadow-sm">Semua</button>
+                    <button type="button" onclick="filterTodo('akan')" id="filter-akan" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Akan Datang</button>
+                    <button type="button" onclick="filterTodo('sedang')" id="filter-sedang" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Sedang Berlangsung</button>
+                    <button type="button" onclick="filterTodo('selesai')" id="filter-selesai" class="todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">Selesai</button>
                 </div>
 
                 <div id="todo-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -254,7 +249,6 @@
                 </div>
             </div>
 
-            <!-- 3. DOKUMEN DAN SURAT TAB -->
             <div id="docs" class="tab-content">
                 <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
@@ -293,7 +287,6 @@
                 </div>
             </div>
 
-            <!-- 4. PENTADBIR SISTEM TAB -->
             <div id="admin" class="tab-content">
                 <div class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Pentadbir Sistem</h2>
@@ -319,7 +312,7 @@
                                 <label class="block text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-1">Kod Segerak Peranti Ini</label>
                                 <div class="flex items-center space-x-2">
                                     <input type="text" id="sync-key-display" readonly class="bg-slate-950 text-emerald-400 font-mono text-center font-bold px-3 py-2 rounded-lg border border-indigo-500/40 w-full tracking-wider shadow-inner text-base">
-                                    <button onclick="copySyncKey()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
+                                    <button type="button" onclick="copySyncKey()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
                                         <i class="fa-regular fa-copy"></i>
                                         <span>Salin</span>
                                     </button>
@@ -332,7 +325,7 @@
                                 <label class="block text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-1">Sambung Kod Dari Peranti Lain</label>
                                 <div class="flex items-center space-x-2">
                                     <input type="text" id="sync-key-input" placeholder="Cth: MYPA-8821" class="bg-white text-slate-900 font-mono uppercase text-center font-bold px-3 py-2 rounded-lg border border-slate-300 w-full text-sm focus:ring-2 focus:ring-emerald-400">
-                                    <button onclick="applyNewSyncKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
+                                    <button type="button" onclick="applyNewSyncKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
                                         <i class="fa-solid fa-link"></i>
                                         <span>Sambung</span>
                                     </button>
@@ -451,7 +444,6 @@
                 </div>
             </div>
 
-            <!-- 5. PDF TAHUNAN TAB -->
             <div id="pdf-report" class="tab-content">
                 <div class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold text-slate-800">Jana PDF Tahunan</h2>
@@ -470,7 +462,7 @@
                             <select id="report-year" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 block p-2.5 min-w-[130px] font-medium shadow-sm">
                                 <!-- Pilihan tahun dijana melalui JS -->
                             </select>
-                            <button onclick="generateAnnualPDF()" class="text-white bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 focus:ring-4 focus:outline-none focus:ring-rose-200 font-semibold rounded-xl text-sm px-6 py-2.5 text-center flex items-center transition-all shadow-md shadow-rose-500/20">
+                            <button type="button" onclick="generateAnnualPDF()" class="text-white bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 focus:ring-4 focus:outline-none focus:ring-rose-200 font-semibold rounded-xl text-sm px-6 py-2.5 text-center flex items-center transition-all shadow-md shadow-rose-500/20">
                                 <i class="fa-solid fa-file-arrow-down mr-2 text-rose-100"></i> Muat Turun PDF
                             </button>
                         </div>
@@ -481,7 +473,7 @@
         </div>
     </main>
 
-    <!-- Toast Notification (Replacement for alert) -->
+    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-24 md:bottom-5 left-4 right-4 md:left-auto md:right-5 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center max-w-xs p-4 space-x-3 text-gray-500 bg-white rounded-lg shadow-xl border border-gray-100 z-50 pointer-events-none mx-auto md:mx-0">
         <div id="toast-icon" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg">
             <!-- Icon injected by JS -->
@@ -489,7 +481,7 @@
         <div id="toast-message" class="ml-3 text-sm font-normal text-gray-800"></div>
     </div>
 
-    <!-- Modal for Document Actions (Simulating Download) -->
+    <!-- Download Modal -->
     <div id="download-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center w-full h-full bg-black bg-opacity-50">
         <div class="relative p-4 w-full max-w-md">
             <div class="relative bg-white rounded-xl shadow-xl">
@@ -502,7 +494,7 @@
                     </div>
                     <h3 class="mb-2 text-xl font-bold text-gray-900">Muat Turun Berjaya!</h3>
                     <p class="text-gray-500 mb-6 text-sm">Fail <span id="modal-filename" class="font-semibold text-gray-800"></span> telah selamat disimpan ke dalam peranti anda.</p>
-                    <button onclick="closeModal()" type="button" class="text-white bg-primary hover:bg-primary_dark focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                    <button type="button" onclick="closeModal()" class="text-white bg-primary hover:bg-primary_dark focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
                         Tutup
                     </button>
                 </div>
@@ -510,7 +502,7 @@
         </div>
     </div>
 
-    <!-- Modal for Editing Document / Task -->
+    <!-- Edit Modal -->
     <div id="edit-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center w-full h-full bg-black bg-opacity-50 p-4">
         <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center p-5 border-b border-gray-100">
@@ -591,7 +583,6 @@
     </div>
 
     <script>
-        
         // --- COLOR HELPER FUNCTIONS ---
         function getCategoryBadge(category) {
             const styles = {
@@ -615,8 +606,7 @@
             return '';
         }
 
-        // --- 1. MULTI-DEVICE & CLOUD DATA MANAGEMENT ---
-        
+        // Configuration & Storage Init
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'mypa-app-cloud';
         const customFirebaseConfig = {
             apiKey: "AIzaSyCbXAcgVpUT0E2p4bmRimFahnKHla05Y_8",
@@ -629,14 +619,19 @@
         };
         const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config) ? JSON.parse(__firebase_config) : customFirebaseConfig;
         
-        // Dynamic Multi-Device Sync Key Management
+        // Dynamic Sync Key Management
         let syncKey = localStorage.getItem('mypa_sync_key');
         if (!syncKey) {
             syncKey = 'MYPA-' + Math.floor(1000 + Math.random() * 9000);
             localStorage.setItem('mypa_sync_key', syncKey);
         }
 
-        let tasks = JSON.parse(localStorage.getItem('mypa_tasks')) || [];
+        let tasks = [];
+        try {
+            tasks = JSON.parse(localStorage.getItem('mypa_tasks')) || [];
+        } catch(e) {
+            tasks = [];
+        }
         
         if (tasks.length === 0) {
             const today = new Date().toISOString().split('T')[0];
@@ -665,21 +660,33 @@
 
         async function saveTaskDB(task) {
             localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
-            if (syncSaveTask) await syncSaveTask(task);
+            if (syncSaveTask) {
+                try {
+                    await syncSaveTask(task);
+                } catch (err) {
+                    console.warn("Kemaskini cloud terhenti, data disimpan secara tempatan:", err);
+                }
+            }
         }
 
         async function deleteTaskDB(taskId) {
             localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
-            if (syncDeleteTask) await syncDeleteTask(taskId);
+            if (syncDeleteTask) {
+                try {
+                    await syncDeleteTask(taskId);
+                } catch (err) {
+                    console.warn("Hapus cloud terhenti, data dibuang dari peranti:", err);
+                }
+            }
         }
 
         function refreshActiveViews() {
-            if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
-            if (document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
-            if (document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search').value);
+            if (document.getElementById('dashboard') && document.getElementById('dashboard').classList.contains('active')) renderDashboard();
+            if (document.getElementById('todo') && document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
+            if (document.getElementById('docs') && document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search')?.value || '');
         }
 
-        // Pemuatan Firebase secara Dinamik & Subskripsi Firestore Real-Time
+        // Pemuatan Firebase secara Selamat Dengan Catching Ralat Penuh
         if (firebaseConfig) {
             Promise.all([
                 import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"),
@@ -690,57 +697,71 @@
                 const auth = authMod.getAuth(app);
                 const db = fsMod.getFirestore(app);
 
-                // Tetapkan Keekalan Sesi Auth (Persistence)
-                authMod.setPersistence(auth, authMod.browserLocalPersistence).catch(console.error);
+                authMod.setPersistence(auth, authMod.browserLocalPersistence).catch(console.warn);
 
                 const initAuth = async () => {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await authMod.signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await authMod.signInAnonymously(auth);
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await authMod.signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await authMod.signInAnonymously(auth);
+                        }
+                    } catch (authErr) {
+                        console.warn("Log masuk anonim Firebase tidak aktif, menggunakan storan tempatan.", authErr);
                     }
                 };
 
                 function subscribeToSyncKey(currentKey) {
-                    if (unsubscribeSnapshot) unsubscribeSnapshot();
+                    try {
+                        if (unsubscribeSnapshot) unsubscribeSnapshot();
 
-                    const tasksRef = fsMod.collection(db, 'artifacts', appId, 'users', currentKey, 'tasks');
-                    
-                    syncSaveTask = async (task) => {
-                        await fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', task.id), task);
-                    };
+                        const tasksRef = fsMod.collection(db, 'artifacts', appId, 'users', currentKey, 'tasks');
+                        
+                        syncSaveTask = async (task) => {
+                            await fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', task.id), task);
+                        };
 
-                    syncDeleteTask = async (taskId) => {
-                        await fsMod.deleteDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', taskId));
-                    };
+                        syncDeleteTask = async (taskId) => {
+                            await fsMod.deleteDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', taskId));
+                        };
 
-                    unsubscribeSnapshot = fsMod.onSnapshot(tasksRef, (snapshot) => {
-                        tasks = [];
-                        snapshot.forEach((docSnap) => {
-                            tasks.push(docSnap.data());
+                        unsubscribeSnapshot = fsMod.onSnapshot(tasksRef, (snapshot) => {
+                            if (!snapshot.empty) {
+                                tasks = [];
+                                snapshot.forEach((docSnap) => {
+                                    tasks.push(docSnap.data());
+                                });
+                                localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
+                            } else if (tasks.length > 0) {
+                                tasks.forEach(t => {
+                                    fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', t.id), t).catch(console.error);
+                                });
+                            }
+                            refreshActiveViews();
+                        }, (error) => {
+                            console.warn("Ralat Live Sync:", error);
                         });
-                        localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
-                        refreshActiveViews();
-                    }, (error) => {
-                        console.error("Ralat Live Sync:", error);
-                    });
+                    } catch (err) {
+                        console.warn("Ralat mendaftar listener Firestore:", err);
+                    }
                 }
 
                 initAuth().then(() => {
                     subscribeToSyncKey(syncKey);
                     
-                    // Expose function to change sync key dynamically
                     window.connectToSyncKey = (newKey) => {
                         syncKey = newKey.trim().toUpperCase();
                         localStorage.setItem('mypa_sync_key', syncKey);
                         updateSyncKeyDisplays();
                         subscribeToSyncKey(syncKey);
                     };
-                });
-            }).catch(err => console.error("Pemuatan Firebase gagal:", err));
+                }).catch(console.warn);
+            }).catch(err => {
+                console.warn("Pemuatan modul Firebase terhalang oleh persekitaran pratonton, mod Local-First diaktifkan:", err);
+            });
         }
 
-        // --- MULTI-DEVICE SYNC ACTIONS ---
+        // Multi-Device Sync UI Actions
         function copySyncKey() {
             navigator.clipboard.writeText(syncKey).then(() => {
                 showToast('Kod Segerak telah disalin!');
@@ -768,8 +789,6 @@
             }
         }
 
-        // --- 2. UI UTILITIES & NAVIGATION ---
-        
         let currentTodoFilter = 'semua';
 
         function filterTodo(filter) {
@@ -792,7 +811,8 @@
         
         function switchTab(targetTab) {
             tabs.forEach(tab => {
-                document.getElementById(tab).classList.remove('active');
+                const el = document.getElementById(tab);
+                if (el) el.classList.remove('active');
                 
                 const deskNav = document.getElementById(`nav-${tab}`);
                 if(deskNav) {
@@ -805,7 +825,8 @@
                 }
             });
 
-            document.getElementById(targetTab).classList.add('active');
+            const targetEl = document.getElementById(targetTab);
+            if (targetEl) targetEl.classList.add('active');
             
             const activeDesk = document.getElementById(`nav-${targetTab}`);
             if(activeDesk) {
@@ -828,6 +849,8 @@
             const iconContainer = document.getElementById('toast-icon');
             const messageEl = document.getElementById('toast-message');
             
+            if (!toast || !iconContainer || !messageEl) return;
+
             messageEl.textContent = message;
             
             if (type === 'success') {
@@ -845,25 +868,26 @@
         }
 
         function formatDateMelayu(dateString) {
+            if (!dateString) return '';
             const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
             const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
         }
 
-        // --- 3. DASHBOARD LOGIC ---
-        
         function updateClock() {
             const now = new Date();
             const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            document.getElementById('live-time').innerText = now.toLocaleTimeString('en-US', timeOptions);
+            const liveTime = document.getElementById('live-time');
+            if (liveTime) liveTime.innerText = now.toLocaleTimeString('en-US', timeOptions);
             
             const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
             const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
             
-            document.getElementById('live-date').innerText = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+            const liveDate = document.getElementById('live-date');
+            if (liveDate) liveDate.innerText = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
         }
         setInterval(updateClock, 1000);
-        updateClock();
 
         let currentCalMonth = new Date().getMonth();
         let currentCalYear = new Date().getFullYear();
@@ -882,9 +906,11 @@
 
         function renderCalendar() {
             const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
-            document.getElementById('calendar-month-year').innerText = `${months[currentCalMonth]} ${currentCalYear}`;
+            const monthYearEl = document.getElementById('calendar-month-year');
+            if (monthYearEl) monthYearEl.innerText = `${months[currentCalMonth]} ${currentCalYear}`;
             
             const grid = document.getElementById('calendar-grid');
+            if (!grid) return;
             grid.innerHTML = '';
             
             const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
@@ -923,8 +949,11 @@
             const todayStr = new Date().toISOString().split('T')[0];
             const todayTasks = tasks.filter(t => t.date === todayStr);
             
-            document.getElementById('today-count').innerText = `${todayTasks.length} Tugasan`;
+            const countEl = document.getElementById('today-count');
+            if (countEl) countEl.innerText = `${todayTasks.length} Tugasan`;
+            
             const container = document.getElementById('today-tasks-container');
+            if (!container) return;
             container.innerHTML = '';
 
             if (todayTasks.length === 0) {
@@ -972,6 +1001,7 @@
         function renderTodo(filterStatus) {
             const container = document.getElementById('todo-container');
             const emptyState = document.getElementById('todo-empty');
+            if (!container || !emptyState) return;
             container.innerHTML = '';
 
             let filteredTasks = tasks;
@@ -990,36 +1020,47 @@
                 
                 filteredTasks.forEach(t => {
                     const isCompleted = t.status === 'selesai';
+                    const safeId = t.id;
+
                     container.innerHTML += `
-                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all ${isCompleted ? 'opacity-70 bg-slate-50/80' : ''}">
-                            <div class="flex justify-between items-start mb-3 gap-2">
-                                ${getStatusBadge(t.status)}
-                                ${getCategoryBadge(t.category)}
-                            </div>
-                            <h4 class="font-bold text-slate-800 text-lg mb-1 leading-snug ${isCompleted ? 'line-through text-slate-400' : ''}">${t.title}</h4>
-                            
-                            ${t.timeStart || t.location ? `
-                            <div class="flex flex-wrap gap-2 text-xs text-indigo-700 bg-indigo-50/80 p-2.5 rounded-xl mb-3 w-full border border-indigo-100/60 font-medium">
-                                ${t.timeStart ? `<span class="whitespace-nowrap"><i class="fa-regular fa-clock mr-1 text-indigo-500"></i>${t.timeStart}${t.timeEnd ? ' - '+t.timeEnd : ''}</span>` : ''}
-                                ${t.location ? `<span class="break-words line-clamp-1"><i class="fa-solid fa-location-dot mr-1 text-rose-500"></i>${t.location}</span>` : ''}
-                            </div>
-                            ` : ''}
-
-                            <p class="text-sm text-slate-500 mb-3 line-clamp-2">${t.notes || 'Tiada catatan.'}</p>
-                            
-                            <div class="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-400 font-medium mt-auto pt-3 border-t border-slate-100 w-full">
-                                <span class="whitespace-nowrap text-slate-600"><i class="fa-regular fa-calendar mr-1.5 text-indigo-500"></i> ${formatDateMelayu(t.date)}</span>
-                                <span class="line-clamp-1 break-all text-slate-600"><i class="fa-regular fa-user mr-1.5 text-indigo-400"></i> ${t.pic}</span>
-                            </div>
-
-                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="flex space-x-3">
-                                    ${t.status !== 'selesai' ? 
-                                      `<button onclick="advanceStatus('${t.id}')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:scale-105 transition-transform" title="Tanda Selesai"><i class="fa-solid fa-check"></i></button>` 
-                                      : ''}
-                                    <button onclick="openEditModal('${t.id}')" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30 hover:scale-105 transition-transform" title="Kemaskini Aktiviti"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button onclick="deleteTask('${t.id}')" class="bg-gradient-to-r from-rose-500 to-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-rose-500/30 hover:scale-105 transition-transform" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all ${isCompleted ? 'opacity-80 bg-slate-50/90' : ''}">
+                            <div>
+                                <div class="flex justify-between items-start mb-3 gap-2">
+                                    ${getStatusBadge(t.status)}
+                                    ${getCategoryBadge(t.category)}
                                 </div>
+                                <h4 class="font-bold text-slate-800 text-lg mb-1 leading-snug break-words ${isCompleted ? 'line-through text-slate-400' : ''}">${t.title}</h4>
+                                
+                                ${t.timeStart || t.location ? `
+                                <div class="flex flex-wrap gap-2 text-xs text-indigo-700 bg-indigo-50/80 p-2.5 rounded-xl mb-3 w-full border border-indigo-100/60 font-medium">
+                                    ${t.timeStart ? `<span class="whitespace-nowrap"><i class="fa-regular fa-clock mr-1 text-indigo-500"></i>${t.timeStart}${t.timeEnd ? ' - '+t.timeEnd : ''}</span>` : ''}
+                                    ${t.location ? `<span class="break-words line-clamp-1"><i class="fa-solid fa-location-dot mr-1 text-rose-500"></i>${t.location}</span>` : ''}
+                                </div>
+                                ` : ''}
+
+                                <p class="text-sm text-slate-500 mb-3 line-clamp-2">${t.notes || 'Tiada catatan.'}</p>
+                                
+                                <div class="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-400 font-medium pt-3 border-t border-slate-100 w-full mb-4">
+                                    <span class="whitespace-nowrap text-slate-600"><i class="fa-regular fa-calendar mr-1.5 text-indigo-500"></i> ${formatDateMelayu(t.date)}</span>
+                                    <span class="line-clamp-1 break-all text-slate-600"><i class="fa-regular fa-user mr-1.5 text-indigo-400"></i> ${t.pic}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100/90 mt-auto">
+                                ${!isCompleted ? 
+                                `<button type="button" onclick="markComplete('${safeId}')" class="flex-1 px-3 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200/80 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-check text-emerald-600 group-hover:text-white"></i> <span>Selesai</span>
+                                </button>` 
+                                : `<button type="button" onclick="toggleReopen('${safeId}')" class="flex-1 px-3 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-rotate-left text-slate-500"></i> <span>Buka</span>
+                                </button>`
+                                }
+                                <button type="button" onclick="openEditModal('${safeId}')" class="flex-1 px-3 py-2 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white border border-amber-200/80 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-pen-to-square text-amber-600 group-hover:text-white"></i> <span>Kemaskini</span>
+                                </button>
+                                <button type="button" onclick="deleteTask('${safeId}')" class="flex-1 px-3 py-2 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white border border-rose-200/80 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-trash text-rose-600 group-hover:text-white"></i> <span>Hapus</span>
+                                </button>
                             </div>
                         </div>
                     `;
@@ -1027,32 +1068,42 @@
             }
         }
 
-        function advanceStatus(id) {
+        async function markComplete(id) {
             const idx = tasks.findIndex(t => t.id === id);
             if (idx > -1) {
-                if(tasks[idx].status === 'akan') tasks[idx].status = 'sedang';
-                else if(tasks[idx].status === 'sedang') tasks[idx].status = 'selesai';
-                
-                saveTaskDB(tasks[idx]).then(() => {
-                    renderTodo(currentTodoFilter);
-                    showToast('Status tugasan dikemaskini.');
-                });
+                tasks[idx].status = 'selesai';
+                await saveTaskDB(tasks[idx]);
+                renderTodo(currentTodoFilter);
+                if (document.getElementById('dashboard')?.classList.contains('active')) renderDashboard();
+                showToast('Tugasan berjaya ditanda sebagai Selesai!');
             }
         }
 
-        function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            deleteTaskDB(id).then(() => {
+        async function toggleReopen(id) {
+            const idx = tasks.findIndex(t => t.id === id);
+            if (idx > -1) {
+                tasks[idx].status = 'sedang';
+                await saveTaskDB(tasks[idx]);
                 renderTodo(currentTodoFilter);
-                showToast('Tugasan berjaya dipadam.');
-            });
+                if (document.getElementById('dashboard')?.classList.contains('active')) renderDashboard();
+                showToast('Tugasan dibuka semula ke status Berlangsung.');
+            }
         }
 
-        // --- 5. DOCUMENTS LOGIC ---
-        
+        async function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            await deleteTaskDB(id);
+            renderTodo(currentTodoFilter);
+            if (document.getElementById('dashboard')?.classList.contains('active')) renderDashboard();
+            if (document.getElementById('docs')?.classList.contains('active')) renderDocs();
+            showToast('Tugasan berjaya dihapuskan.');
+        }
+
         function renderDocs(searchQuery = '') {
             const tbody = document.getElementById('docs-table-body');
             const emptyState = document.getElementById('docs-empty');
+            if (!tbody || !emptyState) return;
+
             tbody.innerHTML = '';
 
             let docTasks = tasks.filter(t => t.fileName && t.fileName.trim() !== '');
@@ -1099,13 +1150,13 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2 flex-wrap sm:flex-nowrap">
-                                    <button onclick="simulateDownload('${t.fileName}')" class="font-medium text-primary bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Muat Turun Fail">
+                                    <button type="button" onclick="simulateDownload('${t.fileName}')" class="font-medium text-primary bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Muat Turun Fail">
                                         <i class="fa-solid fa-download mr-1.5"></i> <span class="hidden sm:inline">Muat Turun</span>
                                     </button>
-                                    <button onclick="openEditModal('${t.id}')" class="font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Kemaskini Rekod">
+                                    <button type="button" onclick="openEditModal('${t.id}')" class="font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Kemaskini Rekod">
                                         <i class="fa-solid fa-pen-to-square mr-1.5"></i> <span class="hidden sm:inline">Kemaskini</span>
                                     </button>
-                                    <button onclick="deleteDocTask('${t.id}')" class="font-medium text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Hapus Dokumen">
+                                    <button type="button" onclick="deleteDocTask('${t.id}')" class="font-medium text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Hapus Dokumen">
                                         <i class="fa-solid fa-trash mr-1.5"></i> <span class="hidden sm:inline">Hapus</span>
                                     </button>
                                 </div>
@@ -1117,31 +1168,33 @@
         }
 
         function searchDocs() {
-            const q = document.getElementById('doc-search').value;
+            const q = document.getElementById('doc-search')?.value || '';
             renderDocs(q);
         }
 
         function simulateDownload(filename) {
-            document.getElementById('modal-filename').innerText = filename;
-            document.getElementById('download-modal').classList.remove('hidden');
+            const modalFn = document.getElementById('modal-filename');
+            const modal = document.getElementById('download-modal');
+            if (modalFn) modalFn.innerText = filename;
+            if (modal) modal.classList.remove('hidden');
             document.body.classList.add('modal-active');
         }
 
         function closeModal() {
-            document.getElementById('download-modal').classList.add('hidden');
+            const modal = document.getElementById('download-modal');
+            if (modal) modal.classList.add('hidden');
             document.body.classList.remove('modal-active');
         }
 
-        function deleteDocTask(id) {
+        async function deleteDocTask(id) {
             const idx = tasks.findIndex(t => t.id === id);
             if (idx > -1) {
                 tasks[idx].fileName = '';
-                saveTaskDB(tasks[idx]).then(() => {
-                    renderDocs(document.getElementById('doc-search').value);
-                    renderDashboard();
-                    renderTodo(currentTodoFilter);
-                    showToast('Dokumen berjaya dihapuskan.');
-                });
+                await saveTaskDB(tasks[idx]);
+                renderDocs(document.getElementById('doc-search')?.value || '');
+                renderDashboard();
+                renderTodo(currentTodoFilter);
+                showToast('Dokumen berjaya dihapuskan.');
             }
         }
 
@@ -1166,11 +1219,12 @@
         }
 
         function closeEditModal() {
-            document.getElementById('edit-modal').classList.add('hidden');
+            const editModal = document.getElementById('edit-modal');
+            if (editModal) editModal.classList.add('hidden');
             document.body.classList.remove('modal-active');
         }
 
-        function handleUpdateTask(e) {
+        async function handleUpdateTask(e) {
             e.preventDefault();
             const id = document.getElementById('edit-task-id').value;
             const idx = tasks.findIndex(t => t.id === id);
@@ -1187,33 +1241,32 @@
                 tasks[idx].fileName = document.getElementById('edit-task-filename').value;
                 tasks[idx].notes = document.getElementById('edit-task-notes').value;
 
-                saveTaskDB(tasks[idx]).then(() => {
-                    closeEditModal();
-                    renderDocs(document.getElementById('doc-search').value);
-                    renderDashboard();
-                    renderTodo(currentTodoFilter);
-                    showToast('Rekod berjaya dikemaskini!');
-                });
+                await saveTaskDB(tasks[idx]);
+                closeEditModal();
+                renderDocs(document.getElementById('doc-search')?.value || '');
+                renderDashboard();
+                renderTodo(currentTodoFilter);
+                showToast('Rekod berjaya dikemaskini!');
             }
         }
 
-        // --- 6. ADMIN / ADD TASK LOGIC ---
-        
         let selectedFileName = '';
 
         function updateFileName(input) {
             const display = document.getElementById('file-name-display');
             if (input.files && input.files[0]) {
                 selectedFileName = input.files[0].name;
-                display.querySelector('span').innerText = selectedFileName;
-                display.classList.remove('hidden');
+                if (display) {
+                    display.querySelector('span').innerText = selectedFileName;
+                    display.classList.remove('hidden');
+                }
             } else {
                 selectedFileName = '';
-                display.classList.add('hidden');
+                if (display) display.classList.add('hidden');
             }
         }
 
-        function handleAddTask(e) {
+        async function handleAddTask(e) {
             e.preventDefault();
             
             const title = document.getElementById('task-title').value;
@@ -1241,21 +1294,20 @@
             };
 
             tasks.push(newTask);
-            saveTaskDB(newTask).then(() => {
-                document.getElementById('add-task-form').reset();
-                selectedFileName = '';
-                document.getElementById('file-name-display').classList.add('hidden');
+            await saveTaskDB(newTask);
 
-                showToast('Maklumat berjaya direkodkan dalam sistem!');
-                
-                setTimeout(() => {
-                    switchTab('dashboard');
-                }, 1000);
-            });
+            document.getElementById('add-task-form').reset();
+            selectedFileName = '';
+            const display = document.getElementById('file-name-display');
+            if (display) display.classList.add('hidden');
+
+            showToast('Maklumat berjaya direkodkan dalam sistem!');
+            
+            setTimeout(() => {
+                switchTab('dashboard');
+            }, 1000);
         }
 
-        // --- 8. PDF GENERATION LOGIC ---
-        
         function populateReportYears() {
             const yearSelect = document.getElementById('report-year');
             if (!yearSelect) return;
@@ -1288,7 +1340,7 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            const year = document.getElementById('report-year').value || new Date().getFullYear();
+            const year = document.getElementById('report-year')?.value || new Date().getFullYear();
             const yearlyTasks = tasks.filter(t => t.date && t.date.startsWith(year));
             
             if (yearlyTasks.length === 0) {
@@ -1339,12 +1391,19 @@
             showToast(`Fail PDF Laporan Tahunan ${year} berjaya dijana!`);
         }
 
-        // --- 9. INITIALIZATION ---
+        // Pemuatan Selamat
         window.onload = () => {
-            updateSyncKeyDisplays();
-            renderDashboard();
-            populateReportYears();
-            document.getElementById('nav-dashboard').className = "w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5";
+            try {
+                updateSyncKeyDisplays();
+                renderDashboard();
+                populateReportYears();
+                const deskNav = document.getElementById('nav-dashboard');
+                if (deskNav) {
+                    deskNav.className = "w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5";
+                }
+            } catch(err) {
+                console.warn("Inisialisasi aplikasi selesai dengan mod selamat:", err);
+            }
         }
     </script>
 </body>
