@@ -115,6 +115,16 @@
                 <span class="font-medium">Jana PDF Tahunan</span>
             </button>
         </nav>
+        
+        <!-- Live Sync Status Badge -->
+        <div class="p-4 mx-3 mb-4 rounded-xl bg-indigo-950/70 border border-indigo-800/50 text-xs">
+            <div class="flex items-center justify-between text-indigo-200 mb-1">
+                <span class="font-semibold flex items-center"><i class="fa-solid fa-rotate text-emerald-400 mr-1.5 animate-spin"></i> Live Multi-Sync</span>
+                <span id="sync-status-badge" class="bg-emerald-500/20 text-emerald-300 text-[10px] px-2 py-0.5 rounded-full font-mono">Aktif</span>
+            </div>
+            <p class="text-indigo-300/80 text-[11px]">Kod Segerak:</p>
+            <p id="sidebar-sync-key" class="font-mono text-emerald-400 font-bold tracking-wider truncate">MYPA-DEMO</p>
+        </div>
     </aside>
 
     <!-- Mobile Bottom Navigation -->
@@ -152,7 +162,10 @@
                 </div>
                 <h1 class="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300">MyPA</h1>
             </div>
-            <span class="text-[11px] text-indigo-200 italic max-w-[130px] text-right leading-tight font-light">"Forgive, yes. Forget, never."</span>
+            <div class="text-right">
+                <span class="text-[11px] text-indigo-200 italic max-w-[130px] block leading-tight font-light">"Forgive, yes. Forget, never."</span>
+                <span id="mobile-sync-key" class="text-[10px] font-mono bg-indigo-900/80 text-emerald-300 px-2 py-0.5 rounded border border-indigo-700 mt-1 inline-block">MYPA-DEMO</span>
+            </div>
         </header>
 
         <div class="flex-1 overflow-y-auto scroll-content p-4 md:p-8 w-full max-w-6xl mx-auto">
@@ -216,7 +229,7 @@
             <div id="todo" class="tab-content">
                 <div class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Senarai Tugasan</h2>
-                    <p class="text-gray-500">Urus dan pantau perkembangan aktiviti anda.</p>
+                    <p class="text-gray-500">Urus, kemaskini dan pantau perkembangan aktiviti anda.</p>
                 </div>
 
                 <!-- Sub Navigation for To-Do -->
@@ -284,10 +297,56 @@
             <div id="admin" class="tab-content">
                 <div class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Pentadbir Sistem</h2>
-                    <p class="text-gray-500">Tambah aktiviti, program atau tugasan baru ke dalam MyPA.</p>
+                    <p class="text-gray-500">Tambah aktiviti baru dan sambungkan peranti lain untuk penyinkronan data masa-nyata.</p>
                 </div>
 
+                <!-- Multi-Device Synchronization Card -->
+                <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-xl p-6 mb-8 border border-indigo-500/30">
+                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                        <div class="space-y-2 max-w-xl">
+                            <div class="inline-flex items-center space-x-2 bg-indigo-500/20 px-3 py-1 rounded-full border border-indigo-400/30 text-indigo-300 text-xs font-medium">
+                                <i class="fa-solid fa-tower-cell text-emerald-400 animate-pulse"></i>
+                                <span>Penyinkronan Berbilang Peranti (Multi-Device Live Sync)</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Kongsi Data Antara Telefon & Laptop</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Masukkan <strong>Kod Segerak</strong> yang sama di <strong>Peranti A</strong> dan <strong>Peranti B</strong>. Sebarang penambahan atau kemaskini data akan terus muncul di kedua-dua skrin secara automatik tanpa perlu menekan refresh.
+                            </p>
+                        </div>
+
+                        <div class="w-full lg:w-auto bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 space-y-3 min-w-[280px]">
+                            <div>
+                                <label class="block text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-1">Kod Segerak Peranti Ini</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" id="sync-key-display" readonly class="bg-slate-950 text-emerald-400 font-mono text-center font-bold px-3 py-2 rounded-lg border border-indigo-500/40 w-full tracking-wider shadow-inner text-base">
+                                    <button onclick="copySyncKey()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
+                                        <i class="fa-regular fa-copy"></i>
+                                        <span>Salin</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <hr class="border-indigo-800/60 my-2">
+
+                            <div>
+                                <label class="block text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-1">Sambung Kod Dari Peranti Lain</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" id="sync-key-input" placeholder="Cth: MYPA-8821" class="bg-white text-slate-900 font-mono uppercase text-center font-bold px-3 py-2 rounded-lg border border-slate-300 w-full text-sm focus:ring-2 focus:ring-emerald-400">
+                                    <button onclick="applyNewSyncKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span>Sambung</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Tambah Tugasan Baru -->
                 <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6 max-w-3xl">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center">
+                        <i class="fa-solid fa-plus-circle text-primary mr-2"></i> Tambah Rekod Tugasan Baru
+                    </h3>
                     <form id="add-task-form" onsubmit="handleAddTask(event)">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Tajuk -->
@@ -556,7 +615,7 @@
             return '';
         }
 
-        // --- 1. DATA MANAGEMENT (LOKAL & CLOUD) ---
+        // --- 1. MULTI-DEVICE & CLOUD DATA MANAGEMENT ---
         
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'mypa-app-cloud';
         const customFirebaseConfig = {
@@ -570,7 +629,13 @@
         };
         const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config) ? JSON.parse(__firebase_config) : customFirebaseConfig;
         
-        let userId = null;
+        // Dynamic Multi-Device Sync Key Management
+        let syncKey = localStorage.getItem('mypa_sync_key');
+        if (!syncKey) {
+            syncKey = 'MYPA-' + Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('mypa_sync_key', syncKey);
+        }
+
         let tasks = JSON.parse(localStorage.getItem('mypa_tasks')) || [];
         
         if (tasks.length === 0) {
@@ -586,6 +651,17 @@
 
         let syncSaveTask = null;
         let syncDeleteTask = null;
+        let unsubscribeSnapshot = null;
+
+        function updateSyncKeyDisplays() {
+            const sidebarEl = document.getElementById('sidebar-sync-key');
+            const mobileEl = document.getElementById('mobile-sync-key');
+            const displayEl = document.getElementById('sync-key-display');
+            
+            if (sidebarEl) sidebarEl.innerText = syncKey;
+            if (mobileEl) mobileEl.innerText = syncKey;
+            if (displayEl) displayEl.value = syncKey;
+        }
 
         async function saveTaskDB(task) {
             localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
@@ -597,7 +673,13 @@
             if (syncDeleteTask) await syncDeleteTask(taskId);
         }
 
-        // Pemuatan Firebase secara Dinamik
+        function refreshActiveViews() {
+            if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
+            if (document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
+            if (document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search').value);
+        }
+
+        // Pemuatan Firebase secara Dinamik & Subskripsi Firestore Real-Time
         if (firebaseConfig) {
             Promise.all([
                 import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"),
@@ -608,6 +690,9 @@
                 const auth = authMod.getAuth(app);
                 const db = fsMod.getFirestore(app);
 
+                // Tetapkan Keekalan Sesi Auth (Persistence)
+                authMod.setPersistence(auth, authMod.browserLocalPersistence).catch(console.error);
+
                 const initAuth = async () => {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await authMod.signInWithCustomToken(auth, __initial_auth_token);
@@ -616,30 +701,71 @@
                     }
                 };
 
-                initAuth().then(() => {
-                    userId = auth.currentUser.uid;
-                    const tasksRef = fsMod.collection(db, 'artifacts', appId, 'users', userId, 'tasks');
+                function subscribeToSyncKey(currentKey) {
+                    if (unsubscribeSnapshot) unsubscribeSnapshot();
+
+                    const tasksRef = fsMod.collection(db, 'artifacts', appId, 'users', currentKey, 'tasks');
                     
                     syncSaveTask = async (task) => {
-                        await fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', userId, 'tasks', task.id), task);
-                    };
-                    syncDeleteTask = async (taskId) => {
-                        await fsMod.deleteDoc(fsMod.doc(db, 'artifacts', appId, 'users', userId, 'tasks', taskId));
+                        await fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', task.id), task);
                     };
 
-                    fsMod.onSnapshot(tasksRef, (snapshot) => {
+                    syncDeleteTask = async (taskId) => {
+                        await fsMod.deleteDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', taskId));
+                    };
+
+                    unsubscribeSnapshot = fsMod.onSnapshot(tasksRef, (snapshot) => {
                         tasks = [];
                         snapshot.forEach((docSnap) => {
                             tasks.push(docSnap.data());
                         });
                         localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
-                        
-                        if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
-                        if (document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
-                        if (document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search').value);
-                    }, (error) => console.error("Ralat Cloud Sync:", error));
+                        refreshActiveViews();
+                    }, (error) => {
+                        console.error("Ralat Live Sync:", error);
+                    });
+                }
+
+                initAuth().then(() => {
+                    subscribeToSyncKey(syncKey);
+                    
+                    // Expose function to change sync key dynamically
+                    window.connectToSyncKey = (newKey) => {
+                        syncKey = newKey.trim().toUpperCase();
+                        localStorage.setItem('mypa_sync_key', syncKey);
+                        updateSyncKeyDisplays();
+                        subscribeToSyncKey(syncKey);
+                    };
                 });
-            }).catch(err => console.error("Pemuatan sistem Firebase gagal:", err));
+            }).catch(err => console.error("Pemuatan Firebase gagal:", err));
+        }
+
+        // --- MULTI-DEVICE SYNC ACTIONS ---
+        function copySyncKey() {
+            navigator.clipboard.writeText(syncKey).then(() => {
+                showToast('Kod Segerak telah disalin!');
+            }).catch(() => {
+                showToast(`Kod Segerak anda: ${syncKey}`);
+            });
+        }
+
+        function applyNewSyncKey() {
+            const input = document.getElementById('sync-key-input');
+            const newKey = input ? input.value.trim().toUpperCase() : '';
+            if (!newKey) {
+                showToast('Sila masukkan Kod Segerak yang sah.', 'error');
+                return;
+            }
+            if (window.connectToSyncKey) {
+                window.connectToSyncKey(newKey);
+                input.value = '';
+                showToast(`Berjaya menyambung ke peranti: ${newKey}`);
+            } else {
+                syncKey = newKey;
+                localStorage.setItem('mypa_sync_key', syncKey);
+                updateSyncKeyDisplays();
+                showToast(`Kod Segerak ditukar ke: ${newKey}`);
+            }
         }
 
         // --- 2. UI UTILITIES & NAVIGATION ---
@@ -891,6 +1017,7 @@
                                     ${t.status !== 'selesai' ? 
                                       `<button onclick="advanceStatus('${t.id}')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:scale-105 transition-transform" title="Tanda Selesai"><i class="fa-solid fa-check"></i></button>` 
                                       : ''}
+                                    <button onclick="openEditModal('${t.id}')" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30 hover:scale-105 transition-transform" title="Kemaskini Aktiviti"><i class="fa-solid fa-pen-to-square"></i></button>
                                     <button onclick="deleteTask('${t.id}')" class="bg-gradient-to-r from-rose-500 to-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-rose-500/30 hover:scale-105 transition-transform" title="Hapus"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
@@ -907,7 +1034,7 @@
                 else if(tasks[idx].status === 'sedang') tasks[idx].status = 'selesai';
                 
                 saveTaskDB(tasks[idx]).then(() => {
-                    if (!userId) renderTodo(currentTodoFilter);
+                    renderTodo(currentTodoFilter);
                     showToast('Status tugasan dikemaskini.');
                 });
             }
@@ -916,7 +1043,7 @@
         function deleteTask(id) {
             tasks = tasks.filter(t => t.id !== id);
             deleteTaskDB(id).then(() => {
-                if (!userId) renderTodo(currentTodoFilter);
+                renderTodo(currentTodoFilter);
                 showToast('Tugasan berjaya dipadam.');
             });
         }
@@ -1010,11 +1137,9 @@
             if (idx > -1) {
                 tasks[idx].fileName = '';
                 saveTaskDB(tasks[idx]).then(() => {
-                    if (!userId) {
-                        renderDocs(document.getElementById('doc-search').value);
-                        renderDashboard();
-                        renderTodo(currentTodoFilter);
-                    }
+                    renderDocs(document.getElementById('doc-search').value);
+                    renderDashboard();
+                    renderTodo(currentTodoFilter);
                     showToast('Dokumen berjaya dihapuskan.');
                 });
             }
@@ -1064,11 +1189,9 @@
 
                 saveTaskDB(tasks[idx]).then(() => {
                     closeEditModal();
-                    if (!userId) {
-                        renderDocs(document.getElementById('doc-search').value);
-                        renderDashboard();
-                        renderTodo(currentTodoFilter);
-                    }
+                    renderDocs(document.getElementById('doc-search').value);
+                    renderDashboard();
+                    renderTodo(currentTodoFilter);
                     showToast('Rekod berjaya dikemaskini!');
                 });
             }
@@ -1218,6 +1341,7 @@
 
         // --- 9. INITIALIZATION ---
         window.onload = () => {
+            updateSyncKeyDisplays();
             renderDashboard();
             populateReportYears();
             document.getElementById('nav-dashboard').className = "w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5";
