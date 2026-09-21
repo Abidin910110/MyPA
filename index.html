@@ -11,11 +11,15 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Ikon Aplikasi untuk Shortcut / Pemasangan Peranti -->
-    <link rel="icon" type="image/png" href="profil.png">
-    <link rel="apple-touch-icon" href="profil.png">
+    <link rel="icon" type="image/png" href="profil.png.png">
+    <link rel="apple-touch-icon" href="profil.png.png">
     <meta name="theme-color" content="#3730a3">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tambahan Pustaka PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -66,8 +70,8 @@
     <aside class="hidden md:flex flex-col w-64 bg-slate-900 text-white transition-all duration-300">
         <div class="p-6 flex flex-col items-center border-b border-slate-700">
             <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl font-bold mb-3 shadow-lg overflow-hidden">
-                <!-- Tukar fallback (onerror) jika profil.png tidak dijumpai -->
-                <img src="profil.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
+                <!-- Tukar fallback (onerror) jika profil.png.png tidak dijumpai -->
+                <img src="profil.png.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
             </div>
             <h1 class="text-2xl font-bold tracking-wider">MyPA</h1>
             <p class="text-xs text-slate-400 mt-2 text-center italic">"Forgive, yes. Forget, never."</p>
@@ -90,26 +94,34 @@
                 <i class="fa-solid fa-gear w-5"></i>
                 <span class="font-medium">Pentadbir Sistem</span>
             </button>
+            <button onclick="switchTab('pdf-report')" id="nav-pdf-report" class="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-file-pdf w-5"></i>
+                <span class="font-medium">Jana PDF Tahunan</span>
+            </button>
         </nav>
     </aside>
 
     <!-- Mobile Bottom Navigation -->
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 z-50 flex justify-around pb-safe">
-        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center p-3 text-primary w-1/4">
+        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center p-3 text-primary w-1/5">
             <i class="fa-solid fa-house text-xl mb-1"></i>
             <span class="text-[10px] font-medium">Dashboard</span>
         </button>
-        <button onclick="switchTab('todo')" id="mob-nav-todo" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors">
+        <button onclick="switchTab('todo')" id="mob-nav-todo" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/5 transition-colors">
             <i class="fa-solid fa-list-check text-xl mb-1"></i>
             <span class="text-[10px] font-medium">To-Do</span>
         </button>
-        <button onclick="switchTab('docs')" id="mob-nav-docs" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors">
+        <button onclick="switchTab('docs')" id="mob-nav-docs" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/5 transition-colors">
             <i class="fa-solid fa-file-lines text-xl mb-1"></i>
             <span class="text-[10px] font-medium">Dokumen</span>
         </button>
-        <button onclick="switchTab('admin')" id="mob-nav-admin" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors">
+        <button onclick="switchTab('admin')" id="mob-nav-admin" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/5 transition-colors">
             <i class="fa-solid fa-gear text-xl mb-1"></i>
             <span class="text-[10px] font-medium">Admin</span>
+        </button>
+        <button onclick="switchTab('pdf-report')" id="mob-nav-pdf-report" class="flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/5 transition-colors">
+            <i class="fa-solid fa-file-pdf text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Laporan</span>
         </button>
     </nav>
 
@@ -120,8 +132,8 @@
         <header class="md:hidden bg-slate-900 text-white p-4 pt-safe flex justify-between items-center shadow-md z-10">
             <div class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm font-bold overflow-hidden">
-                    <!-- Tukar fallback (onerror) jika profil.png tidak dijumpai -->
-                    <img src="profil.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
+                    <!-- Tukar fallback (onerror) jika profil.png.png tidak dijumpai -->
+                    <img src="profil.png.png" alt="Logo MyPA" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/4f46e5/ffffff?text=MyPA';">
                 </div>
                 <h1 class="text-xl font-bold tracking-wider">MyPA</h1>
             </div>
@@ -360,6 +372,33 @@
                 </div>
             </div>
 
+            <!-- 5. PDF TAHUNAN TAB -->
+            <div id="pdf-report" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Jana PDF Tahunan</h2>
+                    <p class="text-gray-500">Muat turun laporan tahunan keseluruhan data sistem untuk rujukan.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6 max-w-3xl flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center text-red-500 text-4xl shrink-0">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">Laporan Keseluruhan Aktiviti</h3>
+                        <p class="text-gray-600 text-sm mb-4">Jana fail PDF yang menyenaraikan semua program, mesyuarat, dan tugasan yang telah direkodkan. Laporan ini tersusun mengikut kronologi dan sesuai untuk rujukan SKT atau penilaian akhir tahun.</p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center gap-3 justify-center md:justify-start">
+                            <select id="report-year" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 min-w-[120px]">
+                                <!-- Pilihan tahun dijana melalui JS -->
+                            </select>
+                            <button onclick="generateAnnualPDF()" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center transition-colors">
+                                <i class="fa-solid fa-download mr-2"></i> Muat Turun PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -555,7 +594,7 @@
 
         // --- 2. UI UTILITIES & NAVIGATION ---
         
-        const tabs = ['dashboard', 'todo', 'docs', 'admin'];
+        const tabs = ['dashboard', 'todo', 'docs', 'admin', 'pdf-report'];
         
         function switchTab(targetTab) {
             // Hide all tabs, show target
@@ -571,7 +610,7 @@
                 // Mobile nav styling
                 const mobNav = document.getElementById(`mob-nav-${tab}`);
                 if(mobNav) {
-                    mobNav.className = "flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/4 transition-colors";
+                    mobNav.className = "flex flex-col items-center p-3 text-gray-400 hover:text-primary w-1/5 transition-colors";
                 }
             });
 
@@ -586,13 +625,14 @@
             // Set active mobile styling
             const activeMob = document.getElementById(`mob-nav-${targetTab}`);
             if(activeMob) {
-                activeMob.className = "flex flex-col items-center p-3 text-primary w-1/4";
+                activeMob.className = "flex flex-col items-center p-3 text-primary w-1/5";
             }
 
             // Refresh specific tab data if needed
             if (targetTab === 'dashboard') renderDashboard();
             if (targetTab === 'todo') renderTodo(currentTodoFilter);
             if (targetTab === 'docs') renderDocs();
+            if (targetTab === 'pdf-report') populateReportYears();
         }
 
         function showToast(message, type = 'success') {
@@ -1064,9 +1104,101 @@
             });
         }
 
-        // --- 7. INITIALIZATION ---
+        // --- 8. PDF GENERATION LOGIC ---
+        
+        function populateReportYears() {
+            const yearSelect = document.getElementById('report-year');
+            if (!yearSelect) return;
+            
+            const currentYear = new Date().getFullYear();
+            let years = new Set([currentYear]);
+            
+            tasks.forEach(t => {
+                if (t.date) {
+                    const y = parseInt(t.date.split('-')[0]);
+                    if (!isNaN(y)) years.add(y);
+                }
+            });
+            
+            const sortedYears = Array.from(years).sort((a, b) => b - a); // Descending
+            
+            yearSelect.innerHTML = '';
+            sortedYears.forEach(y => {
+                const isSelected = y === currentYear ? 'selected' : '';
+                yearSelect.innerHTML += `<option value="${y}" ${isSelected}>Tahun ${y}</option>`;
+            });
+        }
+
+        function generateAnnualPDF() {
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                showToast('Ralat memuatkan fungsi PDF. Sila cuba sebentar lagi.', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const year = document.getElementById('report-year').value || new Date().getFullYear();
+            
+            // Filter tugas berdasarkan tahun yang dipilih
+            const yearlyTasks = tasks.filter(t => t.date && t.date.startsWith(year));
+            
+            if (yearlyTasks.length === 0) {
+                showToast(`Tiada rekod dijumpai untuk tahun ${year}.`, 'error');
+                return;
+            }
+
+            // Tajuk Dokumen
+            doc.setFontSize(16);
+            doc.setTextColor(30, 41, 59);
+            doc.text(`Laporan Tahunan MyPA - ${year}`, 14, 20);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            doc.text(`Dicetak pada: ${formatDateMelayu(new Date().toISOString())}`, 14, 27);
+            
+            // Format data jadual
+            const tableData = yearlyTasks.sort((a, b) => new Date(a.date) - new Date(b.date)).map((t, index) => {
+                let statusLabel = 'Akan Datang';
+                if (t.status === 'sedang') statusLabel = 'Berlangsung';
+                if (t.status === 'selesai') statusLabel = 'Selesai';
+
+                return [
+                    index + 1,
+                    t.date,
+                    t.title,
+                    t.category,
+                    t.pic,
+                    statusLabel
+                ];
+            });
+            
+            // Jana Jadual
+            doc.autoTable({
+                startY: 35,
+                head: [['No.', 'Tarikh', 'Tajuk / Program', 'Kategori', 'PIC', 'Status']],
+                body: tableData,
+                theme: 'grid',
+                styles: { fontSize: 9, cellPadding: 3 },
+                headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255] },
+                columnStyles: {
+                    0: { cellWidth: 10 },
+                    1: { cellWidth: 25 },
+                    3: { cellWidth: 25 },
+                    4: { cellWidth: 35 },
+                    5: { cellWidth: 25 }
+                }
+            });
+            
+            // Muat Turun
+            doc.save(`Laporan_Tahunan_MyPA_${year}.pdf`);
+            showToast(`Fail PDF Laporan Tahunan ${year} berjaya dijana!`);
+        }
+
+        // --- 9. INITIALIZATION ---
         window.onload = () => {
             renderDashboard();
+            populateReportYears(); // Pastikan droplist tahun sedia dimuatkan
             // Start on dashboard
             document.getElementById('nav-dashboard').className = "w-full flex items-center space-x-3 px-4 py-3 bg-primary text-white rounded-lg transition-colors shadow-md";
         }
