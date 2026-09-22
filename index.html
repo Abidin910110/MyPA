@@ -422,7 +422,7 @@
         </div>
     </main>
 
-    <!-- Toast Notification (Replacement for alert) -->
+    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-24 md:bottom-5 left-4 right-4 md:left-auto md:right-5 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center max-w-xs p-4 space-x-3 text-gray-500 bg-white rounded-lg shadow-xl border border-gray-100 z-50 pointer-events-none mx-auto md:mx-0">
         <div id="toast-icon" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg">
             <!-- Icon injected by JS -->
@@ -430,7 +430,7 @@
         <div id="toast-message" class="ml-3 text-sm font-normal text-gray-800"></div>
     </div>
 
-    <!-- Modal for Document Actions (Simulating Download) -->
+    <!-- Modal for Document Actions -->
     <div id="download-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center w-full h-full bg-black bg-opacity-50">
         <div class="relative p-4 w-full max-w-md">
             <div class="relative bg-white rounded-xl shadow-xl">
@@ -532,7 +532,6 @@
     </div>
 
     <script>
-        
         // --- COLOR HELPER FUNCTIONS ---
         function getCategoryBadge(category) {
             const styles = {
@@ -572,17 +571,6 @@
         
         let userId = null;
         let tasks = JSON.parse(localStorage.getItem('mypa_tasks')) || [];
-        
-        if (tasks.length === 0) {
-            const today = new Date().toISOString().split('T')[0];
-            const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
-            
-            tasks = [
-                { id: '1', title: 'Mesyuarat Kewangan Syarikat Q3', pic: 'Ahmad Albab', category: 'Mesyuarat', status: 'sedang', date: today, notes: 'Bincangkan bajet pengiklanan dan latihan staf baru.', fileName: 'Laporan_Kewangan_Q3.pdf' },
-                { id: '2', title: 'Menyiapkan Kertas Kerja Program Bina Semangat', pic: 'Siti Nurhaliza', category: 'Kursus', status: 'akan', date: tomorrow, notes: 'Rujuk format tahun lepas.', fileName: 'Draf_Kertas_Kerja.docx' }
-            ];
-            localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
-        }
 
         let syncSaveTask = null;
         let syncDeleteTask = null;
@@ -616,7 +604,7 @@
                             await authMod.signInAnonymously(auth);
                         }
                     } catch (e) {
-                        console.warn("Ralat Auth Firebase (Anonymous Auth mungkin belum diaktifkan):", e.message);
+                        console.warn("Ralat Auth Firebase:", e.message);
                     }
                 };
 
@@ -627,14 +615,14 @@
                         try {
                             await fsMod.setDoc(fsMod.doc(db, 'MyPA_Tasks', task.id), task);
                         } catch (err) {
-                            console.warn("Penulisan Firestore disekat (Guna Simpanan Lokal):", err.message);
+                            console.warn("Penulisan Firestore disekat:", err.message);
                         }
                     };
                     syncDeleteTask = async (taskId) => {
                         try {
                             await fsMod.deleteDoc(fsMod.doc(db, 'MyPA_Tasks', taskId));
                         } catch (err) {
-                            console.warn("Pemadaman Firestore disekat (Guna Simpanan Lokal):", err.message);
+                            console.warn("Pemadaman Firestore disekat:", err.message);
                         }
                     };
 
@@ -643,14 +631,14 @@
                         snapshot.forEach((docSnap) => {
                             cloudTasks.push(docSnap.data());
                         });
-                        if (cloudTasks.length > 0) {
-                            tasks = cloudTasks;
-                            localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
-                            
-                            if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
-                            if (document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
-                            if (document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search').value);
-                        }
+                        
+                        // Kemaskini data setempat daripada Awan
+                        tasks = cloudTasks;
+                        localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
+                        
+                        if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
+                        if (document.getElementById('todo').classList.contains('active')) renderTodo(currentTodoFilter);
+                        if (document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search').value);
                     }, (error) => {
                         console.warn("Akses Firestore disekat (Sila semak Security Rules):", error.message);
                         showToast('Mod Luar Talian: Firestore Rules perlu dikemaskini.', 'error');
@@ -924,7 +912,7 @@
                 else if(tasks[idx].status === 'sedang') tasks[idx].status = 'selesai';
                 
                 saveTaskDB(tasks[idx]).then(() => {
-                    if (!userId) renderTodo(currentTodoFilter);
+                    renderTodo(currentTodoFilter);
                     showToast('Status tugasan dikemaskini.');
                 });
             }
@@ -933,7 +921,7 @@
         function deleteTask(id) {
             tasks = tasks.filter(t => t.id !== id);
             deleteTaskDB(id).then(() => {
-                if (!userId) renderTodo(currentTodoFilter);
+                renderTodo(currentTodoFilter);
                 showToast('Tugasan berjaya dipadam.');
             });
         }
@@ -1027,11 +1015,9 @@
             if (idx > -1) {
                 tasks[idx].fileName = '';
                 saveTaskDB(tasks[idx]).then(() => {
-                    if (!userId) {
-                        renderDocs(document.getElementById('doc-search').value);
-                        renderDashboard();
-                        renderTodo(currentTodoFilter);
-                    }
+                    renderDocs(document.getElementById('doc-search').value);
+                    renderDashboard();
+                    renderTodo(currentTodoFilter);
                     showToast('Dokumen berjaya dihapuskan.');
                 });
             }
@@ -1081,11 +1067,9 @@
 
                 saveTaskDB(tasks[idx]).then(() => {
                     closeEditModal();
-                    if (!userId) {
-                        renderDocs(document.getElementById('doc-search').value);
-                        renderDashboard();
-                        renderTodo(currentTodoFilter);
-                    }
+                    renderDocs(document.getElementById('doc-search').value);
+                    renderDashboard();
+                    renderTodo(currentTodoFilter);
                     showToast('Rekod berjaya dikemaskini!');
                 });
             }
