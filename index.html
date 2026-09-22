@@ -114,14 +114,12 @@
             </button>
         </nav>
         
-        <!-- Live Sync Status Badge -->
+        <!-- Connection Status Badge -->
         <div class="p-4 mx-3 mb-4 rounded-xl bg-indigo-950/70 border border-indigo-800/50 text-xs">
-            <div class="flex items-center justify-between text-indigo-200 mb-1">
-                <span class="font-semibold flex items-center"><i class="fa-solid fa-rotate text-emerald-400 mr-1.5 animate-spin"></i> Live Multi-Sync</span>
+            <div class="flex items-center justify-between text-indigo-200">
+                <span class="font-semibold flex items-center"><i class="fa-solid fa-cloud text-emerald-400 mr-1.5"></i> Status Rangkaian</span>
                 <span id="sync-status-badge" class="bg-emerald-500/20 text-emerald-300 text-[10px] px-2 py-0.5 rounded-full font-mono">Aktif</span>
             </div>
-            <p class="text-indigo-300/80 text-[11px]">Kod Segerak:</p>
-            <p id="sidebar-sync-key" class="font-mono text-emerald-400 font-bold tracking-wider truncate">MYPA-DEMO</p>
         </div>
     </aside>
 
@@ -161,7 +159,6 @@
             </div>
             <div class="text-right">
                 <span class="text-[11px] text-indigo-200 italic max-w-[130px] block leading-tight font-light">"Forgive, yes. Forget, never."</span>
-                <span id="mobile-sync-key" class="text-[10px] font-mono bg-indigo-900/80 text-emerald-300 px-2 py-0.5 rounded border border-indigo-700 mt-1 inline-block">MYPA-DEMO</span>
             </div>
         </header>
 
@@ -290,49 +287,7 @@
             <div id="admin" class="tab-content">
                 <div class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Pentadbir Sistem</h2>
-                    <p class="text-gray-500">Tambah aktiviti baru dan sambungkan peranti lain untuk penyinkronan data masa-nyata.</p>
-                </div>
-
-                <!-- Multi-Device Synchronization Card -->
-                <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-xl p-6 mb-8 border border-indigo-500/30">
-                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                        <div class="space-y-2 max-w-xl">
-                            <div class="inline-flex items-center space-x-2 bg-indigo-500/20 px-3 py-1 rounded-full border border-indigo-400/30 text-indigo-300 text-xs font-medium">
-                                <i class="fa-solid fa-tower-cell text-emerald-400 animate-pulse"></i>
-                                <span>Penyinkronan Berbilang Peranti (Multi-Device Live Sync)</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white">Kongsi Data Antara Telefon & Laptop</h3>
-                            <p class="text-slate-300 text-sm leading-relaxed">
-                                Masukkan <strong>Kod Segerak</strong> yang sama di <strong>Peranti A</strong> dan <strong>Peranti B</strong>. Sebarang penambahan atau kemaskini data akan terus muncul di kedua-dua skrin secara automatik tanpa perlu menekan refresh.
-                            </p>
-                        </div>
-
-                        <div class="w-full lg:w-auto bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 space-y-3 min-w-[280px]">
-                            <div>
-                                <label class="block text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-1">Kod Segerak Peranti Ini</label>
-                                <div class="flex items-center space-x-2">
-                                    <input type="text" id="sync-key-display" readonly class="bg-slate-950 text-emerald-400 font-mono text-center font-bold px-3 py-2 rounded-lg border border-indigo-500/40 w-full tracking-wider shadow-inner text-base">
-                                    <button type="button" onclick="copySyncKey()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
-                                        <i class="fa-regular fa-copy"></i>
-                                        <span>Salin</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <hr class="border-indigo-800/60 my-2">
-
-                            <div>
-                                <label class="block text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-1">Sambung Kod Dari Peranti Lain</label>
-                                <div class="flex items-center space-x-2">
-                                    <input type="text" id="sync-key-input" placeholder="Cth: MYPA-8821" class="bg-white text-slate-900 font-mono uppercase text-center font-bold px-3 py-2 rounded-lg border border-slate-300 w-full text-sm focus:ring-2 focus:ring-emerald-400">
-                                    <button type="button" onclick="applyNewSyncKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center gap-1">
-                                        <i class="fa-solid fa-link"></i>
-                                        <span>Sambung</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="text-gray-500">Tambah aktiviti dan pengurusan rekod aplikasi.</p>
                 </div>
 
                 <!-- Form Tambah Tugasan Baru -->
@@ -440,7 +395,7 @@
                         </div>
 
                         <div class="mt-8 flex justify-end">
-                            <button type="submit" class="text-white bg-primary hover:bg-primary_dark focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-3 text-center flex items-center justify-center transition-colors">
+                            <button type="submit" id="btn-submit-task" class="text-white bg-primary hover:bg-primary_dark focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-3 text-center flex items-center justify-center transition-colors">
                                 <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Rekod
                             </button>
                         </div>
@@ -497,7 +452,7 @@
                         <i class="fa-solid fa-download text-3xl text-green-500"></i>
                     </div>
                     <h3 class="mb-2 text-xl font-bold text-gray-900">Muat Turun Berjaya!</h3>
-                    <p class="text-gray-500 mb-6 text-sm">Fail <span id="modal-filename" class="font-semibold text-gray-800"></span> telah selamat disimpan ke dalam peranti anda.</p>
+                    <p class="text-gray-500 mb-6 text-sm">Fail <span id="modal-filename" class="font-semibold text-gray-800"></span> telah selamat dibuka/disimpan ke dalam peranti anda.</p>
                     <button type="button" onclick="closeModal()" class="text-white bg-primary hover:bg-primary_dark focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
                         Tutup
                     </button>
@@ -579,12 +534,16 @@
                     <input type="text" id="edit-task-filename" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" placeholder="Contoh: Surat_Kebenaran.pdf">
                 </div>
                 <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-900">Tukar / Muat Naik Dokumen Baru</label>
+                    <input type="file" id="edit-task-file" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2" />
+                </div>
+                <div>
                     <label class="block mb-1 text-sm font-medium text-gray-900">Catatan / Minit</label>
                     <textarea id="edit-task-notes" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"></textarea>
                 </div>
                 <div class="flex justify-end space-x-3 pt-3 border-t border-gray-100">
                     <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">Batal</button>
-                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary_dark"><i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Perubahan</button>
+                    <button type="submit" id="btn-update-task" class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary_dark"><i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -626,13 +585,6 @@
             measurementId: "G-7GTEKJZ9KG"
         };
         const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config) ? JSON.parse(__firebase_config) : customFirebaseConfig;
-        
-        // Dynamic Sync Key Management
-        let syncKey = localStorage.getItem('mypa_sync_key');
-        if (!syncKey) {
-            syncKey = 'MYPA-' + Math.floor(1000 + Math.random() * 9000);
-            localStorage.setItem('mypa_sync_key', syncKey);
-        }
 
         let tasks = [];
         try {
@@ -646,25 +598,16 @@
             const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
             
             tasks = [
-                { id: '1', title: 'Mesyuarat Kewangan Syarikat Q3', pic: 'Ahmad Albab', category: 'Mesyuarat', status: 'sedang', date: today, dateStart: today, dateEnd: today, notes: 'Bincangkan bajet pengiklanan dan latihan staf baru.', fileName: 'Laporan_Kewangan_Q3.pdf' },
-                { id: '2', title: 'Menyiapkan Kertas Kerja Program Bina Semangat', pic: 'Siti Nurhaliza', category: 'Kursus', status: 'akan', date: tomorrow, dateStart: tomorrow, dateEnd: tomorrow, notes: 'Rujuk format tahun lepas.', fileName: 'Draf_Kertas_Kerja.docx' }
+                { id: '1', title: 'Mesyuarat Kewangan Syarikat Q3', pic: 'Ahmad Albab', category: 'Mesyuarat', status: 'sedang', date: today, dateStart: today, dateEnd: today, notes: 'Bincangkan bajet pengiklanan dan latihan staf baru.', fileName: 'Laporan_Kewangan_Q3.pdf', fileUrl: '' },
+                { id: '2', title: 'Menyiapkan Kertas Kerja Program Bina Semangat', pic: 'Siti Nurhaliza', category: 'Kursus', status: 'akan', date: tomorrow, dateStart: tomorrow, dateEnd: tomorrow, notes: 'Rujuk format tahun lepas.', fileName: 'Draf_Kertas_Kerja.docx', fileUrl: '' }
             ];
             localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
         }
 
         let syncSaveTask = null;
         let syncDeleteTask = null;
+        let uploadFileToStorage = null;
         let unsubscribeSnapshot = null;
-
-        function updateSyncKeyDisplays() {
-            const sidebarEl = document.getElementById('sidebar-sync-key');
-            const mobileEl = document.getElementById('mobile-sync-key');
-            const displayEl = document.getElementById('sync-key-display');
-            
-            if (sidebarEl) sidebarEl.innerText = syncKey;
-            if (mobileEl) mobileEl.innerText = syncKey;
-            if (displayEl) displayEl.value = syncKey;
-        }
 
         async function saveTaskDB(task) {
             localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
@@ -694,16 +637,18 @@
             if (document.getElementById('docs') && document.getElementById('docs').classList.contains('active')) renderDocs(document.getElementById('doc-search')?.value || '');
         }
 
-        // Pemuatan Firebase versi rasmi terkini (10.12.2) secara selamat
+        // Pemuatan Firebase versi rasmi terkini secara selamat
         if (firebaseConfig) {
             Promise.all([
                 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
                 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
-                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
-            ]).then(([appMod, authMod, fsMod]) => {
+                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"),
+                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js")
+            ]).then(([appMod, authMod, fsMod, stMod]) => {
                 const app = appMod.initializeApp(firebaseConfig);
                 const auth = authMod.getAuth(app);
                 const db = fsMod.getFirestore(app);
+                const storage = stMod.getStorage(app);
 
                 authMod.setPersistence(auth, authMod.browserLocalPersistence).catch(console.warn);
 
@@ -719,18 +664,25 @@
                     }
                 };
 
-                function subscribeToSyncKey(currentKey) {
+                uploadFileToStorage = async (file, path) => {
+                    const storageRef = stMod.ref(storage, path);
+                    const snapshot = await stMod.uploadBytes(storageRef, file);
+                    const downloadURL = await stMod.getDownloadURL(snapshot.ref);
+                    return downloadURL;
+                };
+
+                function subscribeToGlobalCollection() {
                     try {
                         if (unsubscribeSnapshot) unsubscribeSnapshot();
 
-                        const tasksRef = fsMod.collection(db, 'artifacts', appId, 'users', currentKey, 'tasks');
+                        const tasksRef = fsMod.collection(db, 'mypa_global_tasks');
                         
                         syncSaveTask = async (task) => {
-                            await fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', task.id), task);
+                            await fsMod.setDoc(fsMod.doc(db, 'mypa_global_tasks', task.id), task);
                         };
 
                         syncDeleteTask = async (taskId) => {
-                            await fsMod.deleteDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', taskId));
+                            await fsMod.deleteDoc(fsMod.doc(db, 'mypa_global_tasks', taskId));
                         };
 
                         unsubscribeSnapshot = fsMod.onSnapshot(tasksRef, (snapshot) => {
@@ -742,12 +694,12 @@
                                 localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
                             } else if (tasks.length > 0) {
                                 tasks.forEach(t => {
-                                    fsMod.setDoc(fsMod.doc(db, 'artifacts', appId, 'users', currentKey, 'tasks', t.id), t).catch(console.error);
+                                    fsMod.setDoc(fsMod.doc(db, 'mypa_global_tasks', t.id), t).catch(console.error);
                                 });
                             }
                             refreshActiveViews();
                         }, (error) => {
-                            console.warn("Ralat Live Sync:", error);
+                            console.warn("Ralat Sambungan Cloud:", error);
                         });
                     } catch (err) {
                         console.warn("Ralat mendaftar listener Firestore:", err);
@@ -755,46 +707,11 @@
                 }
 
                 initAuth().then(() => {
-                    subscribeToSyncKey(syncKey);
-                    
-                    window.connectToSyncKey = (newKey) => {
-                        syncKey = newKey.trim().toUpperCase();
-                        localStorage.setItem('mypa_sync_key', syncKey);
-                        updateSyncKeyDisplays();
-                        subscribeToSyncKey(syncKey);
-                    };
+                    subscribeToGlobalCollection();
                 }).catch(console.warn);
             }).catch(err => {
                 console.warn("Pemuatan modul Firebase menggunakan mod Local-First:", err);
             });
-        }
-
-        // Multi-Device Sync UI Actions
-        function copySyncKey() {
-            navigator.clipboard.writeText(syncKey).then(() => {
-                showToast('Kod Segerak telah disalin!');
-            }).catch(() => {
-                showToast(`Kod Segerak anda: ${syncKey}`);
-            });
-        }
-
-        function applyNewSyncKey() {
-            const input = document.getElementById('sync-key-input');
-            const newKey = input ? input.value.trim().toUpperCase() : '';
-            if (!newKey) {
-                showToast('Sila masukkan Kod Segerak yang sah.', 'error');
-                return;
-            }
-            if (window.connectToSyncKey) {
-                window.connectToSyncKey(newKey);
-                input.value = '';
-                showToast(`Berjaya menyambung ke peranti: ${newKey}`);
-            } else {
-                syncKey = newKey;
-                localStorage.setItem('mypa_sync_key', syncKey);
-                updateSyncKeyDisplays();
-                showToast(`Kod Segerak ditukar ke: ${newKey}`);
-            }
         }
 
         let currentTodoFilter = 'semua';
@@ -1173,7 +1090,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2 flex-wrap sm:flex-nowrap">
-                                    <button type="button" onclick="simulateDownload('${t.fileName}')" class="font-medium text-primary bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Muat Turun Fail">
+                                    <button type="button" onclick="simulateDownload('${t.fileName}', '${t.fileUrl || ''}')" class="font-medium text-primary bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Muat Turun Fail">
                                         <i class="fa-solid fa-download mr-1.5"></i> <span class="hidden sm:inline">Muat Turun</span>
                                     </button>
                                     <button type="button" onclick="openEditModal('${t.id}')" class="font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg flex items-center text-xs transition-colors whitespace-nowrap" title="Kemaskini Rekod">
@@ -1195,12 +1112,16 @@
             renderDocs(q);
         }
 
-        function simulateDownload(filename) {
-            const modalFn = document.getElementById('modal-filename');
-            const modal = document.getElementById('download-modal');
-            if (modalFn) modalFn.innerText = filename;
-            if (modal) modal.classList.remove('hidden');
-            document.body.classList.add('modal-active');
+        function simulateDownload(filename, url) {
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                const modalFn = document.getElementById('modal-filename');
+                const modal = document.getElementById('download-modal');
+                if (modalFn) modalFn.innerText = filename;
+                if (modal) modal.classList.remove('hidden');
+                document.body.classList.add('modal-active');
+            }
         }
 
         function closeModal() {
@@ -1213,6 +1134,7 @@
             const idx = tasks.findIndex(t => t.id === id);
             if (idx > -1) {
                 tasks[idx].fileName = '';
+                tasks[idx].fileUrl = '';
                 await saveTaskDB(tasks[idx]);
                 renderDocs(document.getElementById('doc-search')?.value || '');
                 renderDashboard();
@@ -1250,12 +1172,31 @@
 
         async function handleUpdateTask(e) {
             e.preventDefault();
+            const btn = document.getElementById('btn-update-task');
+            if (btn) btn.disabled = true;
+
             const id = document.getElementById('edit-task-id').value;
             const idx = tasks.findIndex(t => t.id === id);
 
             if (idx > -1) {
                 const dateStart = document.getElementById('edit-task-date-start').value;
                 const dateEnd = document.getElementById('edit-task-date-end').value || dateStart;
+                
+                const editFileInput = document.getElementById('edit-task-file');
+                let newFileUrl = tasks[idx].fileUrl || '';
+                let newFileName = document.getElementById('edit-task-filename').value;
+
+                if (editFileInput && editFileInput.files[0]) {
+                    const file = editFileInput.files[0];
+                    newFileName = file.name;
+                    if (uploadFileToStorage) {
+                        try {
+                            newFileUrl = await uploadFileToStorage(file, `documents/${Date.now()}_${file.name}`);
+                        } catch (err) {
+                            console.warn("Ralat memuat naik fail ke Cloud Storage:", err);
+                        }
+                    }
+                }
 
                 tasks[idx].title = document.getElementById('edit-task-title').value;
                 tasks[idx].pic = document.getElementById('edit-task-pic').value;
@@ -1267,10 +1208,12 @@
                 tasks[idx].timeEnd = document.getElementById('edit-task-time-end').value;
                 tasks[idx].location = document.getElementById('edit-task-location').value;
                 tasks[idx].status = document.getElementById('edit-task-status').value;
-                tasks[idx].fileName = document.getElementById('edit-task-filename').value;
+                tasks[idx].fileName = newFileName;
+                tasks[idx].fileUrl = newFileUrl;
                 tasks[idx].notes = document.getElementById('edit-task-notes').value;
 
                 await saveTaskDB(tasks[idx]);
+                if (btn) btn.disabled = false;
                 closeEditModal();
                 renderDocs(document.getElementById('doc-search')?.value || '');
                 renderDashboard();
@@ -1280,24 +1223,29 @@
         }
 
         let selectedFileName = '';
+        let selectedFileObj = null;
 
         function updateFileName(input) {
             const display = document.getElementById('file-name-display');
             if (input.files && input.files[0]) {
-                selectedFileName = input.files[0].name;
+                selectedFileObj = input.files[0];
+                selectedFileName = selectedFileObj.name;
                 if (display) {
                     display.querySelector('span').innerText = selectedFileName;
                     display.classList.remove('hidden');
                 }
             } else {
                 selectedFileName = '';
+                selectedFileObj = null;
                 if (display) display.classList.add('hidden');
             }
         }
 
         async function handleAddTask(e) {
             e.preventDefault();
-            
+            const btn = document.getElementById('btn-submit-task');
+            if (btn) btn.disabled = true;
+
             const title = document.getElementById('task-title').value;
             const pic = document.getElementById('task-pic').value;
             const category = document.getElementById('task-category').value;
@@ -1308,6 +1256,15 @@
             const location = document.getElementById('task-location').value;
             const status = document.getElementById('task-status').value;
             const notes = document.getElementById('task-notes').value;
+
+            let fileUrl = '';
+            if (selectedFileObj && uploadFileToStorage) {
+                try {
+                    fileUrl = await uploadFileToStorage(selectedFileObj, `documents/${Date.now()}_${selectedFileObj.name}`);
+                } catch (err) {
+                    console.warn("Ralat memuat naik fail ke Cloud Storage:", err);
+                }
+            }
 
             const newTask = {
                 id: Date.now().toString(),
@@ -1322,7 +1279,8 @@
                 location,
                 status,
                 notes,
-                fileName: selectedFileName
+                fileName: selectedFileName,
+                fileUrl: fileUrl
             };
 
             tasks.push(newTask);
@@ -1330,8 +1288,10 @@
 
             document.getElementById('add-task-form').reset();
             selectedFileName = '';
+            selectedFileObj = null;
             const display = document.getElementById('file-name-display');
             if (display) display.classList.add('hidden');
+            if (btn) btn.disabled = false;
 
             showToast('Maklumat berjaya direkodkan dalam sistem!');
             
@@ -1430,7 +1390,6 @@
         // Pemuatan Selamat
         window.onload = () => {
             try {
-                updateSyncKeyDisplays();
                 renderDashboard();
                 populateReportYears();
                 const deskNav = document.getElementById('nav-dashboard');
