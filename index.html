@@ -323,11 +323,15 @@
                                 </select>
                             </div>
 
-                            <!-- Tarikh, Masa & Tempat -->
-                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Tarikh Mula, Tarikh Tamat & Masa -->
+                            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarikh <span class="text-red-500">*</span></label>
-                                    <input type="date" id="task-date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarikh Mula <span class="text-red-500">*</span></label>
+                                    <input type="date" id="task-date-start" required onchange="onStartDateChange()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                </div>
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarikh Tamat <span class="text-red-500">*</span></label>
+                                    <input type="date" id="task-date-end" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
                                 </div>
                                 <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Masa Mula</label>
@@ -487,10 +491,16 @@
                         </select>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- Tarikh Mula & Tarikh Tamat & Masa -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <label class="block mb-1 text-sm font-medium text-gray-900">Tarikh</label>
-                        <input type="date" id="edit-task-date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Tarikh Mula</label>
+                        <input type="date" id="edit-task-date-start" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-900">Tarikh Tamat</label>
+                        <input type="date" id="edit-task-date-end" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
                     </div>
                     <div>
                         <label class="block mb-1 text-sm font-medium text-gray-900">Masa Mula</label>
@@ -501,6 +511,7 @@
                         <input type="time" id="edit-task-time-end" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
                     </div>
                 </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block mb-1 text-sm font-medium text-gray-900">Tempat</label>
@@ -532,7 +543,7 @@
     </div>
 
     <script>
-        // --- COLOR HELPER FUNCTIONS ---
+        // --- COLOR & DATE HELPER FUNCTIONS ---
         function getCategoryBadge(category) {
             const styles = {
                 'Mesyuarat': 'bg-indigo-100 text-indigo-700 border-indigo-200',
@@ -553,6 +564,40 @@
             if (status === 'sedang') return '<span class="bg-sky-50 text-sky-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-sky-200/80 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>Berlangsung</span>';
             if (status === 'selesai') return '<span class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200/80 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Selesai</span>';
             return '';
+        }
+
+        function formatDateMelayu(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function getTaskStartDate(t) {
+            return t.startDate || t.dateStart || t.date || '';
+        }
+
+        function getTaskEndDate(t) {
+            return t.endDate || t.dateEnd || getTaskStartDate(t);
+        }
+
+        function getTaskDateDisplay(t) {
+            const start = getTaskStartDate(t);
+            const end = getTaskEndDate(t);
+            if (!start) return '';
+            if (!end || start === end) {
+                return formatDateMelayu(start);
+            }
+            return `${formatDateMelayu(start)} - ${formatDateMelayu(end)}`;
+        }
+
+        function onStartDateChange() {
+            const startVal = document.getElementById('task-date-start').value;
+            const endElem = document.getElementById('task-date-end');
+            if (startVal && (!endElem.value || endElem.value < startVal)) {
+                endElem.value = startVal;
+            }
         }
 
         // --- 1. DATA MANAGEMENT (LOKAL & CLOUD) ---
@@ -723,12 +768,6 @@
             }, 3000);
         }
 
-        function formatDateMelayu(dateString) {
-            const date = new Date(dateString);
-            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
-            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-        }
-
         // --- 3. DASHBOARD LOGIC ---
         
         function updateClock() {
@@ -784,7 +823,12 @@
                     isTodayClass = 'gradient-brand text-white font-bold rounded-xl shadow-md shadow-indigo-500/30';
                 }
                 
-                const hasTask = tasks.some(t => t.date === cellDateStr);
+                const hasTask = tasks.some(t => {
+                    const start = getTaskStartDate(t);
+                    const end = getTaskEndDate(t);
+                    return start && cellDateStr >= start && cellDateStr <= end;
+                });
+                
                 const dotIndicator = hasTask && cellDateStr !== todayStr ? '<div class="w-1.5 h-1.5 bg-indigo-600 rounded-full mx-auto mt-0.5"></div>' : '';
 
                 grid.innerHTML += `
@@ -800,7 +844,11 @@
             renderCalendar();
             
             const todayStr = new Date().toISOString().split('T')[0];
-            const todayTasks = tasks.filter(t => t.date === todayStr);
+            const todayTasks = tasks.filter(t => {
+                const start = getTaskStartDate(t);
+                const end = getTaskEndDate(t);
+                return start && todayStr >= start && todayStr <= end;
+            });
             
             document.getElementById('today-count').innerText = `${todayTasks.length} Tugasan`;
             const container = document.getElementById('today-tasks-container');
@@ -835,6 +883,7 @@
                                     ${getCategoryBadge(t.category)}
                                 </div>
                                 <h4 class="font-bold text-slate-800 text-lg break-words leading-snug">${t.title}</h4>
+                                <p class="text-xs text-indigo-600 font-semibold mt-1"><i class="fa-regular fa-calendar-check mr-1"></i> ${getTaskDateDisplay(t)}</p>
                                 <p class="text-sm text-slate-500 mt-1 flex items-center"><i class="fa-regular fa-user mr-1.5 text-indigo-400"></i> PIC: <span class="font-medium text-slate-700 ml-1">${t.pic}</span></p>
                                 ${timeLocString}
                             </div>
@@ -858,7 +907,7 @@
                 filteredTasks = tasks.filter(t => t.status === filterStatus);
             }
 
-            filteredTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+            filteredTasks.sort((a, b) => new Date(getTaskStartDate(a)) - new Date(getTaskStartDate(b)));
 
             if (filteredTasks.length === 0) {
                 container.classList.add('hidden');
@@ -887,7 +936,7 @@
                             <p class="text-sm text-slate-500 mb-3 line-clamp-2">${t.notes || 'Tiada catatan.'}</p>
                             
                             <div class="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-400 font-medium mt-auto pt-3 border-t border-slate-100 w-full">
-                                <span class="whitespace-nowrap text-slate-600"><i class="fa-regular fa-calendar mr-1.5 text-indigo-500"></i> ${formatDateMelayu(t.date)}</span>
+                                <span class="whitespace-nowrap text-slate-600"><i class="fa-regular fa-calendar mr-1.5 text-indigo-500"></i> ${getTaskDateDisplay(t)}</span>
                                 <span class="line-clamp-1 break-all text-slate-600"><i class="fa-regular fa-user mr-1.5 text-indigo-400"></i> ${t.pic}</span>
                             </div>
 
@@ -973,7 +1022,7 @@
                                 ${t.title}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-                                ${formatDateMelayu(t.date)}
+                                ${getTaskDateDisplay(t)}
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2 flex-wrap sm:flex-nowrap">
@@ -1031,7 +1080,10 @@
             document.getElementById('edit-task-title').value = task.title;
             document.getElementById('edit-task-pic').value = task.pic;
             document.getElementById('edit-task-category').value = task.category;
-            document.getElementById('edit-task-date').value = task.date;
+            
+            document.getElementById('edit-task-date-start').value = getTaskStartDate(task);
+            document.getElementById('edit-task-date-end').value = getTaskEndDate(task);
+            
             document.getElementById('edit-task-time-start').value = task.timeStart || '';
             document.getElementById('edit-task-time-end').value = task.timeEnd || '';
             document.getElementById('edit-task-location').value = task.location || '';
@@ -1054,10 +1106,17 @@
             const idx = tasks.findIndex(t => t.id === id);
 
             if (idx > -1) {
+                const startDate = document.getElementById('edit-task-date-start').value;
+                const endDate = document.getElementById('edit-task-date-end').value || startDate;
+
                 tasks[idx].title = document.getElementById('edit-task-title').value;
                 tasks[idx].pic = document.getElementById('edit-task-pic').value;
                 tasks[idx].category = document.getElementById('edit-task-category').value;
-                tasks[idx].date = document.getElementById('edit-task-date').value;
+                
+                tasks[idx].startDate = startDate;
+                tasks[idx].endDate = endDate;
+                tasks[idx].date = startDate; // backward compatibility
+
                 tasks[idx].timeStart = document.getElementById('edit-task-time-start').value;
                 tasks[idx].timeEnd = document.getElementById('edit-task-time-end').value;
                 tasks[idx].location = document.getElementById('edit-task-location').value;
@@ -1097,7 +1156,10 @@
             const title = document.getElementById('task-title').value;
             const pic = document.getElementById('task-pic').value;
             const category = document.getElementById('task-category').value;
-            const date = document.getElementById('task-date').value;
+            
+            const startDate = document.getElementById('task-date-start').value;
+            const endDate = document.getElementById('task-date-end').value || startDate;
+            
             const timeStart = document.getElementById('task-time-start').value;
             const timeEnd = document.getElementById('task-time-end').value;
             const location = document.getElementById('task-location').value;
@@ -1109,7 +1171,9 @@
                 title,
                 pic,
                 category,
-                date,
+                startDate,
+                endDate,
+                date: startDate, // backward compatibility
                 timeStart,
                 timeEnd,
                 location,
@@ -1142,8 +1206,9 @@
             let years = new Set([currentYear]);
             
             tasks.forEach(t => {
-                if (t.date) {
-                    const y = parseInt(t.date.split('-')[0]);
+                const sDate = getTaskStartDate(t);
+                if (sDate) {
+                    const y = parseInt(sDate.split('-')[0]);
                     if (!isNaN(y)) years.add(y);
                 }
             });
@@ -1167,7 +1232,10 @@
             const doc = new jsPDF();
             
             const year = document.getElementById('report-year').value || new Date().getFullYear();
-            const yearlyTasks = tasks.filter(t => t.date && t.date.startsWith(year));
+            const yearlyTasks = tasks.filter(t => {
+                const sDate = getTaskStartDate(t);
+                return sDate && sDate.startsWith(year);
+            });
             
             if (yearlyTasks.length === 0) {
                 showToast(`Tiada rekod dijumpai untuk tahun ${year}.`, 'error');
@@ -1182,14 +1250,14 @@
             doc.setTextColor(100, 116, 139);
             doc.text(`Dicetak pada: ${formatDateMelayu(new Date().toISOString())}`, 14, 27);
             
-            const tableData = yearlyTasks.sort((a, b) => new Date(a.date) - new Date(b.date)).map((t, index) => {
+            const tableData = yearlyTasks.sort((a, b) => new Date(getTaskStartDate(a)) - new Date(getTaskStartDate(b))).map((t, index) => {
                 let statusLabel = 'Akan Datang';
                 if (t.status === 'sedang') statusLabel = 'Berlangsung';
                 if (t.status === 'selesai') statusLabel = 'Selesai';
 
                 return [
                     index + 1,
-                    t.date,
+                    getTaskDateDisplay(t),
                     t.title,
                     t.category,
                     t.pic,
@@ -1206,10 +1274,10 @@
                 headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255] },
                 columnStyles: {
                     0: { cellWidth: 10 },
-                    1: { cellWidth: 25 },
-                    3: { cellWidth: 25 },
-                    4: { cellWidth: 35 },
-                    5: { cellWidth: 25 }
+                    1: { cellWidth: 32 },
+                    3: { cellWidth: 22 },
+                    4: { cellWidth: 30 },
+                    5: { cellWidth: 22 }
                 }
             });
             
