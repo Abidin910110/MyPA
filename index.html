@@ -465,6 +465,22 @@
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // --- Bind fungsi untuk butang HTML di bahagian paling atas bagi mengelakkan ralat 'undefined' ---
+        window.switchTab = switchTab;
+        window.changeMonth = changeMonth;
+        window.filterTodo = filterTodo;
+        window.searchDocs = searchDocs;
+        window.simpanRekodAdmin = simpanRekodAdmin;
+        window.resetForm = resetForm;
+        window.updateFileName = updateFileName;
+        window.generatePDF = generatePDF;
+        window.closeModal = closeModal;
+        window.downloadSim = downloadSim;
+        window.editTask = editTask;
+        window.confirmDeleteTask = confirmDeleteTask;
+        window.updateTaskStatus = updateTaskStatus;
+        window.executeDelete = executeDelete;
+
         // State Management
         let tasks = [];
         let currentDate = new Date();
@@ -473,14 +489,29 @@
 
         // Firebase Setup
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'mypa-app';
-        let firebaseConfig = {};
-        try { firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {}; } catch (e) {}
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCbXAcgVpUT0E2p4bmRimFahnKHla05Y_8",
+            authDomain: "mypa-28443.firebaseapp.com",
+            databaseURL: "https://mypa-28443-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mypa-28443",
+            storageBucket: "mypa-28443.firebasestorage.app",
+            messagingSenderId: "1050210642433",
+            appId: "1:1050210642433:web:6d2173fa6ad2d76a91ee00",
+            measurementId: "G-7GTEKJZ9KG"
+        };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (error) {
+            console.warn("Konfigurasi Firebase tiada atau ralat. Aplikasi akan berjalan menggunakan storan memori sementara.", error);
+        }
 
         async function initAuth() {
+            if (!auth) return; // Fallback jika Firebase gagal
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
@@ -842,7 +873,14 @@
         // Core Task Management Logic
         async function updateTaskStatus(id, newStatus) {
             const task = tasks.find(t => t.id === id);
-            if (task && auth.currentUser) {
+            if (task) {
+                if (!auth || !auth.currentUser) {
+                    // Fallback mod luar talian / memori sementara
+                    task.status = newStatus;
+                    renderDashboard(); renderTodos(); renderDocs(); renderCalendar();
+                    showModal('Status Dikemaskini', `Tugasan ditandakan sebagai "${newStatus}".`, 'success');
+                    return;
+                }
                 try {
                     const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', id);
                     await setDoc(taskRef, { ...task, status: newStatus }, { merge: true });
@@ -887,8 +925,16 @@
         }
 
         async function executeDelete(id) {
-            if(!auth.currentUser) return;
             closeModal();
+            if(!auth || !auth.currentUser) {
+                // Fallback mod luar talian / memori sementara
+                tasks = tasks.filter(t => t.id !== id);
+                renderDashboard(); renderTodos(); renderDocs(); renderCalendar();
+                setTimeout(() => {
+                    showModal('Berjaya Dihapus', 'Tugasan telah dikeluarkan (storan memori).', 'success');
+                }, 300);
+                return;
+            }
             try {
                 const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', id);
                 await deleteDoc(taskRef);
@@ -966,11 +1012,6 @@
         async function simpanRekodAdmin(e) {
             e.preventDefault();
             
-            if(!auth.currentUser) {
-                showModal('Ralat Sesi', 'Pengesahan pengguna gagal. Sila muat semula.', 'error');
-                return;
-            }
-            
             const taskId = document.getElementById('admin-task-id').value;
             const tarikhMula = document.getElementById('admin-task-tarikh-mula').value;
             const tarikhTamat = document.getElementById('admin-task-tarikh-tamat').value;
@@ -1006,6 +1047,20 @@
                 deskripsi: document.getElementById('admin-task-deskripsi').value,
                 fail: fileName,
             };
+
+            if(!auth || !auth.currentUser) {
+                // Fallback mod luar talian / memori sementara
+                const existingIndex = tasks.findIndex(t => t.id === newId);
+                if(existingIndex > -1) {
+                    tasks[existingIndex] = taskData;
+                } else {
+                    tasks.push(taskData);
+                }
+                renderDashboard(); renderTodos(); renderDocs(); renderCalendar();
+                showModal(taskId ? 'Berjaya Dikemaskini' : 'Berjaya Ditambah', taskId ? 'Maklumat tugasan telah dikemaskini (storan memori).' : 'Tugasan / Program baru telah direkodkan (storan memori).', 'success');
+                resetForm();
+                return;
+            }
 
             try {
                 const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', newId);
@@ -1131,21 +1186,6 @@
             }, 300); // Wait for transition
         }
 
-        // --- Bind functions to window for HTML inline event handlers ---
-        window.switchTab = switchTab;
-        window.changeMonth = changeMonth;
-        window.filterTodo = filterTodo;
-        window.searchDocs = searchDocs;
-        window.simpanRekodAdmin = simpanRekodAdmin;
-        window.resetForm = resetForm;
-        window.updateFileName = updateFileName;
-        window.generatePDF = generatePDF;
-        window.closeModal = closeModal;
-        window.downloadSim = downloadSim;
-        window.editTask = editTask;
-        window.confirmDeleteTask = confirmDeleteTask;
-        window.updateTaskStatus = updateTaskStatus;
-        window.executeDelete = executeDelete;
     </script>
 </body>
 </html>
