@@ -513,11 +513,19 @@
         async function initAuth() {
             if (!auth) return; // Fallback jika Firebase gagal
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
+                try {
+                    // Cuba gunakan token jika disediakan oleh persekitaran (host)
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (innerError) {
+                    // Jika token tidak sepadan (custom-token-mismatch), log masuk sebagai Anonymous
+                    console.warn("Sistem bertukar ke log masuk tanpa nama (Anonymous)...");
                     await signInAnonymously(auth);
                 }
+                
                 setupRealtimeSync();
             } catch (error) {
                 console.error("Auth error:", error);
@@ -528,7 +536,9 @@
         function setupRealtimeSync() {
             const user = auth.currentUser;
             if (!user) return;
-            const tasksRef = collection(db, 'artifacts', appId, 'users', user.uid, 'tasks');
+            
+            // KEMASKINI: Menukar laluan pangkalan data kepada awam (public) supaya semua peranti melihat data yang sama
+            const tasksRef = collection(db, 'artifacts', appId, 'public', 'data', 'tasks');
             
             unsubscribe = onSnapshot(tasksRef, (snapshot) => {
                 tasks = [];
@@ -536,7 +546,7 @@
                     tasks.push({ ...doc.data(), id: doc.id });
                 });
                 
-                // Segarkan paparan secara automatik
+                // Segarkan paparan secara automatik setiap kali ada perubahan di peranti lain
                 renderDashboard();
                 renderTodos();
                 renderDocs();
@@ -559,43 +569,32 @@
 
         // Navigation Logic
         function switchTab(tabId) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            // Show selected tab
             document.getElementById(tabId).classList.add('active');
 
-            // Reset desktop nav styles
             document.querySelectorAll('aside nav button').forEach(btn => {
                 btn.className = "w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-white/10 hover:text-white rounded-xl transition-all";
             });
             
-            // Set active desktop nav style
             const activeDesktopBtn = document.getElementById(`nav-${tabId}`);
             if(activeDesktopBtn) {
                 activeDesktopBtn.className = "w-full flex items-center space-x-3 px-4 py-3 gradient-brand text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5";
             }
 
-            // Reset mobile nav styles
             document.querySelectorAll('nav.md\\:hidden button').forEach(btn => {
                 btn.className = "flex flex-col items-center p-2.5 text-gray-400 hover:text-indigo-600 w-1/5 transition-colors";
             });
 
-            // Set active mobile nav style
             const activeMobileBtn = document.getElementById(`mob-nav-${tabId}`);
             if(activeMobileBtn) {
                 activeMobileBtn.className = "flex flex-col items-center p-2.5 text-indigo-600 w-1/5";
             }
 
-            // Re-render specific tab contents to ensure freshness
             if(tabId === 'dashboard') renderDashboard();
             if(tabId === 'todo') renderTodos();
             if(tabId === 'docs') renderDocs();
-            if(tabId === 'admin') {
-                // Keep the form in its current state (create or edit)
-                // Just switching to the tab
-            }
         }
 
         // Live Clock
@@ -608,7 +607,6 @@
             document.getElementById('live-date').innerText = now.toLocaleDateString('ms-MY', dateOptions);
         }
 
-        // Calendar Logic
         function renderCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
@@ -622,7 +620,6 @@
             
             grid.innerHTML = '';
             
-            // Adjust day to start on Sunday
             for (let i = 0; i < firstDay; i++) {
                 grid.innerHTML += `<div></div>`;
             }
@@ -632,7 +629,6 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 
-                // Check if date has tasks
                 const hasTask = tasks.some(t => {
                     return dateString >= t.tarikhMula && dateString <= t.tarikhTamat;
                 });
@@ -656,11 +652,9 @@
             renderCalendar();
         }
 
-        // Dashboard Render
         function renderDashboard() {
             const container = document.getElementById('today-tasks-container');
             const today = new Date();
-            // Format to local YYYY-MM-DD safely
             const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             
             const todaysTasks = tasks.filter(t => todayStr >= t.tarikhMula && todayStr <= t.tarikhTamat);
@@ -707,11 +701,9 @@
             });
         }
 
-        // To-Do List Logic
         function filterTodo(status) {
             currentFilter = status;
             
-            // Update button styles
             document.querySelectorAll('.todo-filter').forEach(btn => {
                 btn.className = "todo-filter px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm";
             });
@@ -795,13 +787,11 @@
             });
         }
 
-        // Docs Logic
         function renderDocs(searchQuery = '') {
             const tbody = document.getElementById('docs-table-body');
             const emptyState = document.getElementById('docs-empty');
             tbody.innerHTML = '';
             
-            // Only tasks with files
             let docs = tasks.filter(t => t.fail && t.fail.trim() !== '');
 
             if (searchQuery) {
@@ -870,19 +860,18 @@
             showModal('Muat Turun Bermula', `Fail <b>${filename}</b> sedang dimuat turun. (Fungsi simulasi)`, 'info');
         }
 
-        // Core Task Management Logic
         async function updateTaskStatus(id, newStatus) {
             const task = tasks.find(t => t.id === id);
             if (task) {
                 if (!auth || !auth.currentUser) {
-                    // Fallback mod luar talian / memori sementara
                     task.status = newStatus;
                     renderDashboard(); renderTodos(); renderDocs(); renderCalendar();
                     showModal('Status Dikemaskini', `Tugasan ditandakan sebagai "${newStatus}".`, 'success');
                     return;
                 }
                 try {
-                    const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', id);
+                    // KEMASKINI: Update di public path supaya semua peranti dapat maklumat terbaru
+                    const taskRef = doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id);
                     await setDoc(taskRef, { ...task, status: newStatus }, { merge: true });
                     showModal('Status Dikemaskini', `Tugasan ditandakan sebagai "${newStatus}".`, 'success');
                 } catch(e) {
@@ -904,9 +893,8 @@
             iconContainer.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
             
             document.getElementById('modal-title').innerHTML = 'Sahkan Hapus Tugasan';
-            document.getElementById('modal-message').innerHTML = `Adakah anda pasti mahu menghapuskan tugasan <b>"${task.tajuk}"</b>? Tindakan ini tidak boleh dipulihkan.`;
+            document.getElementById('modal-message').innerHTML = `Adakah anda pasti mahu menghapuskan tugasan <b>"${task.tajuk}"</b>? Tindakan ini tidak boleh dipulihkan untuk semua pengguna.`;
 
-            // Replace action buttons for confirmation
             actionsContainer.innerHTML = `
                 <div class="flex space-x-3 w-full">
                     <button onclick="closeModal()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl transition-colors">Batal</button>
@@ -927,7 +915,6 @@
         async function executeDelete(id) {
             closeModal();
             if(!auth || !auth.currentUser) {
-                // Fallback mod luar talian / memori sementara
                 tasks = tasks.filter(t => t.id !== id);
                 renderDashboard(); renderTodos(); renderDocs(); renderCalendar();
                 setTimeout(() => {
@@ -936,10 +923,11 @@
                 return;
             }
             try {
-                const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', id);
+                // KEMASKINI: Delete dari public path
+                const taskRef = doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id);
                 await deleteDoc(taskRef);
                 setTimeout(() => {
-                    showModal('Berjaya Dihapus', 'Tugasan telah dikeluarkan dari pangkalan data.', 'success');
+                    showModal('Berjaya Dihapus', 'Tugasan telah dikeluarkan dari sistem berkongsi.', 'success');
                 }, 300);
             } catch(e) {
                 console.error(e);
@@ -952,10 +940,8 @@
             const task = tasks.find(t => t.id === id);
             if (!task) return;
 
-            // Switch to Admin Tab
             switchTab('admin');
 
-            // Populate form
             document.getElementById('admin-task-id').value = task.id;
             document.getElementById('admin-task-tajuk').value = task.tajuk;
             document.getElementById('admin-task-pic').value = task.pic;
@@ -968,7 +954,6 @@
             document.getElementById('admin-task-tempat').value = task.tempat || '';
             document.getElementById('admin-task-deskripsi').value = task.deskripsi || '';
 
-            // Handle file display
             if (task.fail) {
                 const existingFileDisplay = document.getElementById('existing-file-display');
                 existingFileDisplay.classList.remove('hidden');
@@ -976,14 +961,12 @@
             } else {
                 document.getElementById('existing-file-display').classList.add('hidden');
             }
-            document.getElementById('file-name-display').classList.add('hidden'); // hide new file input display
+            document.getElementById('file-name-display').classList.add('hidden');
 
-            // UI Changes for Edit Mode
             document.getElementById('btn-cancel-edit').classList.remove('hidden');
             document.getElementById('text-submit-form').innerText = 'Kemaskini Tugasan';
             document.getElementById('icon-submit-form').className = 'fa-solid fa-floppy-disk';
             
-            // Scroll to top smoothly
             document.querySelector('.scroll-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -991,7 +974,6 @@
             document.getElementById('formAdminRecord').reset();
             document.getElementById('admin-task-id').value = '';
             
-            // Reset UI to Create Mode
             document.getElementById('btn-cancel-edit').classList.add('hidden');
             document.getElementById('text-submit-form').innerText = 'Tambah Tugasan';
             document.getElementById('icon-submit-form').className = 'fa-solid fa-plus';
@@ -1024,7 +1006,6 @@
             const fileInput = document.getElementById('admin-task-fail');
             let fileName = '';
             
-            // Handle file logic: If updating and no new file selected, keep old file
             if (taskId) {
                 const existingTask = tasks.find(t => t.id === taskId);
                 fileName = fileInput.files.length > 0 ? fileInput.files[0].name : existingTask.fail;
@@ -1038,7 +1019,7 @@
                 tajuk: document.getElementById('admin-task-tajuk').value,
                 pic: document.getElementById('admin-task-pic').value,
                 kategori: document.getElementById('admin-task-kategori').value,
-                status: document.getElementById('admin-task-status').value, // Get from new dropdown
+                status: document.getElementById('admin-task-status').value,
                 tarikhMula: tarikhMula,
                 tarikhTamat: tarikhTamat,
                 masaMula: document.getElementById('admin-task-masa-mula').value,
@@ -1049,7 +1030,6 @@
             };
 
             if(!auth || !auth.currentUser) {
-                // Fallback mod luar talian / memori sementara
                 const existingIndex = tasks.findIndex(t => t.id === newId);
                 if(existingIndex > -1) {
                     tasks[existingIndex] = taskData;
@@ -1063,13 +1043,14 @@
             }
 
             try {
-                const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', newId);
+                // KEMASKINI: Simpan di public path supaya semua peranti nampak
+                const taskRef = doc(db, 'artifacts', appId, 'public', 'data', 'tasks', newId);
                 await setDoc(taskRef, taskData);
                 
                 if (taskId) {
-                    showModal('Berjaya Dikemaskini', 'Maklumat tugasan telah dikemaskini dalam awan.', 'success');
+                    showModal('Berjaya Dikemaskini', 'Maklumat tugasan telah dikemaskini dalam pangkalan data awam.', 'success');
                 } else {
-                    showModal('Berjaya Ditambah', 'Tugasan / Program baru telah direkodkan.', 'success');
+                    showModal('Berjaya Ditambah', 'Tugasan / Program baru telah diselaraskan ke semua peranti.', 'success');
                 }
                 resetForm();
             } catch(error) {
@@ -1078,7 +1059,6 @@
             }
         }
 
-        // PDF Generation
         function generatePDF() {
             if(tasks.length === 0) {
                 showModal('Tiada Rekod', 'Tiada rekod tugasan untuk dijana.', 'error');
@@ -1088,23 +1068,19 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Add Title
             doc.setFont("helvetica", "bold");
             doc.setFontSize(18);
-            doc.setTextColor(55, 48, 163); // primary dark
+            doc.setTextColor(55, 48, 163); 
             doc.text("Laporan Aktiviti & Tugasan MyPA", 14, 22);
             
-            // Add Date
             doc.setFont("helvetica", "normal");
             doc.setFontSize(10);
             doc.setTextColor(100, 116, 139);
             doc.text(`Tarikh Janaan: ${new Date().toLocaleDateString('ms-MY')}`, 14, 30);
             
-            // Prepare table data
             const tableColumn = ["Bil", "Tajuk Tugasan", "Kategori", "PIC", "Tarikh Mula", "Status"];
             const tableRows = [];
 
-            // Sort tasks by date
             const sortedTasks = [...tasks].sort((a, b) => new Date(a.tarikhMula) - new Date(b.tarikhMula));
 
             sortedTasks.forEach((task, index) => {
@@ -1119,24 +1095,21 @@
                 tableRows.push(taskData);
             });
 
-            // AutoTable plugin
             doc.autoTable({
                 head: [tableColumn],
                 body: tableRows,
                 startY: 38,
                 theme: 'striped',
-                headStyles: { fillColor: [79, 70, 229] }, // Indigo 600
+                headStyles: { fillColor: [79, 70, 229] }, 
                 styles: { fontSize: 9, font: "helvetica" },
                 alternateRowStyles: { fillColor: [248, 250, 252] }
             });
 
-            // Save the PDF
             doc.save("Laporan_Tahunan_MyPA.pdf");
             
             showModal('Muat Turun Berjaya', 'Laporan PDF telah dijana.', 'success');
         }
 
-        // Custom Modal Logic
         function showModal(title, message, type = 'info') {
             const modal = document.getElementById('custom-modal');
             const iconContainer = document.getElementById('modal-icon');
@@ -1145,7 +1118,6 @@
             document.getElementById('modal-title').innerHTML = title;
             document.getElementById('modal-message').innerHTML = message;
 
-            // Reset Default Action Button
             actionsContainer.innerHTML = `<button onclick="closeModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition-colors">Tutup</button>`;
 
             if (type === 'success') {
@@ -1154,7 +1126,6 @@
             } else if (type === 'error') {
                 iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-rose-100 text-rose-500 text-3xl";
                 iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-                // Change close button color for error
                 actionsContainer.innerHTML = `<button onclick="closeModal()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2.5 rounded-xl transition-colors">Tutup</button>`;
             } else {
                 iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-blue-100 text-blue-500 text-3xl";
@@ -1164,7 +1135,6 @@
             modal.classList.remove('hidden');
             document.body.classList.add('modal-active');
             
-            // Trigger animation
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 document.getElementById('modal-content').classList.remove('scale-95');
@@ -1183,7 +1153,7 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
                 document.body.classList.remove('modal-active');
-            }, 300); // Wait for transition
+            }, 300);
         }
 
     </script>
