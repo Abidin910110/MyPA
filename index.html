@@ -401,6 +401,7 @@
                         </div>
                     </form>
                 </div>
+
             </div>
 
             <div id="pdf-report" class="tab-content">
@@ -459,31 +460,59 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // State Management
-        let tasks = JSON.parse(localStorage.getItem('mypa_tasks')) || [];
+        let tasks = [];
         let currentDate = new Date();
         let currentFilter = 'semua';
-        
-        // Ensure default tasks if empty for demo purposes
-        if (tasks.length === 0) {
-            tasks = [
-                {
-                    id: Date.now().toString(),
-                    tajuk: "Mesyuarat Kewangan Q3",
-                    pic: "Ahmad Albab",
-                    kategori: "Mesyuarat",
-                    tarikhMula: new Date().toISOString().split('T')[0], // Today
-                    tarikhTamat: new Date().toISOString().split('T')[0],
-                    masaMula: "09:00",
-                    masaTamat: "11:00",
-                    tempat: "Bilik Gerakan",
-                    deskripsi: "Pembentangan laporan kewangan suku ketiga.",
-                    fail: "Laporan_Kewangan_Q3.pdf",
-                    status: "Sedang Berlangsung"
+        let unsubscribe = null;
+
+        // Firebase Setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mypa-app';
+        let firebaseConfig = {};
+        try { firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {}; } catch (e) {}
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
                 }
-            ];
-            saveTasks();
+                setupRealtimeSync();
+            } catch (error) {
+                console.error("Auth error:", error);
+                showModal('Ralat Sambungan', 'Gagal menyambung ke pangkalan data awan.', 'error');
+            }
+        }
+
+        function setupRealtimeSync() {
+            const user = auth.currentUser;
+            if (!user) return;
+            const tasksRef = collection(db, 'artifacts', appId, 'users', user.uid, 'tasks');
+            
+            unsubscribe = onSnapshot(tasksRef, (snapshot) => {
+                tasks = [];
+                snapshot.forEach((doc) => {
+                    tasks.push({ ...doc.data(), id: doc.id });
+                });
+                
+                // Segarkan paparan secara automatik
+                renderDashboard();
+                renderTodos();
+                renderDocs();
+                renderCalendar();
+            }, (error) => {
+                console.error("Firestore error:", error);
+            });
         }
 
         // Initialize App
@@ -494,12 +523,8 @@
             renderDashboard();
             renderTodos();
             renderDocs();
+            initAuth(); // Mulakan sambungan Firebase
         });
-
-        // Utility: Save to Local Storage
-        function saveTasks() {
-            localStorage.setItem('mypa_tasks', JSON.stringify(tasks));
-        }
 
         // Navigation Logic
         function switchTab(tabId) {
@@ -815,15 +840,17 @@
         }
 
         // Core Task Management Logic
-        function updateTaskStatus(id, newStatus) {
-            const taskIndex = tasks.findIndex(t => t.id === id);
-            if (taskIndex > -1) {
-                tasks[taskIndex].status = newStatus;
-                saveTasks();
-                renderTodos();
-                renderDashboard();
-                renderDocs(); // Docs view might show status
-                showModal('Status Dikemaskini', `Tugasan ditandakan sebagai "${newStatus}".`, 'success');
+        async function updateTaskStatus(id, newStatus) {
+            const task = tasks.find(t => t.id === id);
+            if (task && auth.currentUser) {
+                try {
+                    const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', id);
+                    await setDoc(taskRef, { ...task, status: newStatus }, { merge: true });
+                    showModal('Status Dikemaskini', `Tugasan ditandakan sebagai "${newStatus}".`, 'success');
+                } catch(e) {
+                    console.error(e);
+                    showModal('Ralat', 'Gagal mengemaskini status di awan.', 'error');
+                }
             }
         }
 
@@ -859,19 +886,19 @@
             }, 10);
         }
 
-        function executeDelete(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            saveTasks();
+        async function executeDelete(id) {
+            if(!auth.currentUser) return;
             closeModal();
-            
-            // Slight delay for smooth transition
-            setTimeout(() => {
-                renderTodos();
-                renderDashboard();
-                renderCalendar();
-                renderDocs();
-                showModal('Berjaya Dihapus', 'Tugasan telah dikeluarkan dari sistem.', 'success');
-            }, 300);
+            try {
+                const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', id);
+                await deleteDoc(taskRef);
+                setTimeout(() => {
+                    showModal('Berjaya Dihapus', 'Tugasan telah dikeluarkan dari pangkalan data.', 'success');
+                }, 300);
+            } catch(e) {
+                console.error(e);
+                showModal('Ralat', 'Gagal menghapus tugasan.', 'error');
+            }
         }
 
         // Admin Form Editing Logic
@@ -936,8 +963,13 @@
             }
         }
 
-        function simpanRekodAdmin(e) {
+        async function simpanRekodAdmin(e) {
             e.preventDefault();
+            
+            if(!auth.currentUser) {
+                showModal('Ralat Sesi', 'Pengesahan pengguna gagal. Sila muat semula.', 'error');
+                return;
+            }
             
             const taskId = document.getElementById('admin-task-id').value;
             const tarikhMula = document.getElementById('admin-task-tarikh-mula').value;
@@ -959,8 +991,9 @@
                 fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
             }
 
+            const newId = taskId || Date.now().toString();
             const taskData = {
-                id: taskId || Date.now().toString(),
+                id: newId,
                 tajuk: document.getElementById('admin-task-tajuk').value,
                 pic: document.getElementById('admin-task-pic').value,
                 kategori: document.getElementById('admin-task-kategori').value,
@@ -974,28 +1007,20 @@
                 fail: fileName,
             };
 
-            if (taskId) {
-                // Update existing
-                const index = tasks.findIndex(t => t.id === taskId);
-                if (index !== -1) {
-                    tasks[index] = taskData;
-                    showModal('Berjaya Dikemaskini', 'Maklumat tugasan telah dikemaskini dalam sistem.', 'success');
+            try {
+                const taskRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'tasks', newId);
+                await setDoc(taskRef, taskData);
+                
+                if (taskId) {
+                    showModal('Berjaya Dikemaskini', 'Maklumat tugasan telah dikemaskini dalam awan.', 'success');
+                } else {
+                    showModal('Berjaya Ditambah', 'Tugasan / Program baru telah direkodkan.', 'success');
                 }
-            } else {
-                // Create new
-                tasks.push(taskData);
-                showModal('Berjaya Ditambah', 'Tugasan / Program baru telah direkodkan.', 'success');
+                resetForm();
+            } catch(error) {
+                console.error(error);
+                showModal('Ralat', 'Gagal menyimpan rekod ke pangkalan data.', 'error');
             }
-
-            saveTasks();
-            
-            // Re-render components
-            renderCalendar();
-            renderDashboard();
-            renderTodos();
-            renderDocs();
-            
-            resetForm();
         }
 
         // PDF Generation
@@ -1105,6 +1130,22 @@
                 document.body.classList.remove('modal-active');
             }, 300); // Wait for transition
         }
+
+        // --- Bind functions to window for HTML inline event handlers ---
+        window.switchTab = switchTab;
+        window.changeMonth = changeMonth;
+        window.filterTodo = filterTodo;
+        window.searchDocs = searchDocs;
+        window.simpanRekodAdmin = simpanRekodAdmin;
+        window.resetForm = resetForm;
+        window.updateFileName = updateFileName;
+        window.generatePDF = generatePDF;
+        window.closeModal = closeModal;
+        window.downloadSim = downloadSim;
+        window.editTask = editTask;
+        window.confirmDeleteTask = confirmDeleteTask;
+        window.updateTaskStatus = updateTaskStatus;
+        window.executeDelete = executeDelete;
     </script>
 </body>
 </html>
